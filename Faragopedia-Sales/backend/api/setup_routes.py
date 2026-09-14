@@ -59,7 +59,7 @@ def suggest_schema(req: SuggestRequest):
                 snapshots_dir=tmpdir,
                 schema_dir=tmpdir,
             )
-            llm = wm._init_llm()
+            llm = wm._init_llm("chat")
         result = suggest_schema_llm(req.org_name, req.org_description, llm)
         return result.model_dump()
     except Exception as exc:
