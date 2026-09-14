@@ -7,9 +7,10 @@ import { API_BASE } from '../config';
 interface Props {
   className?: string;
   onLinkClick?: (path: string) => void;
+  showHeader?: boolean;
 }
 
-const ChatPanel: React.FC<Props> = ({ className = '', onLinkClick }) => {
+const ChatPanel: React.FC<Props> = ({ className = '', onLinkClick, showHeader = true }) => {
   const [chatQuery, setChatQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<{ id: number, role: 'user' | 'assistant', content: string }[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
@@ -39,22 +40,29 @@ const ChatPanel: React.FC<Props> = ({ className = '', onLinkClick }) => {
 
   const processChatLinks = (text: string) => {
     return text.replace(/\[\[(.*?)\]\]/g, (match, p1) => {
-      const trimmed = p1.trim();
-      const slug = trimmed.toLowerCase().replace(/\s+/g, '-');
-      if (trimmed.includes('/')) {
-        return `[${trimmed.split('/').pop()?.replace(/-/g, ' ')}](#${trimmed.replace('/', '__')})`;
+      const [rawPath, rawAlias] = p1.split('|');
+      // The LLM is inconsistent about including the .md extension in the
+      // wikilink itself — strip it here so the anchor never doubles it up.
+      const path = rawPath.trim().replace(/\.md$/i, '');
+      const alias = rawAlias?.trim();
+      const slug = path.toLowerCase().replace(/\s+/g, '-');
+      if (path.includes('/')) {
+        const label = alias || path.split('/').pop()?.replace(/-/g, ' ');
+        return `[${label}](#${path.replace(/\//g, '__')})`;
       }
-      return `[${trimmed}](#${slug})`;
+      return `[${alias || path}](#${slug})`;
     });
   };
 
   return (
     <div className={`flex flex-col bg-white h-full ${className}`}>
-      <div className="border-b px-4 h-16 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-between shrink-0">
-        <h2 className="font-bold text-gray-800 flex items-center">
-          <MessageSquare className="w-5 h-5 mr-2" /> AI Assistant
-        </h2>
-      </div>
+      {showHeader && (
+        <div className="border-b px-4 h-16 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-between shrink-0">
+          <h2 className="font-bold text-gray-800 flex items-center">
+            <MessageSquare className="w-5 h-5 mr-2" /> AI Assistant
+          </h2>
+        </div>
+      )}
       <div className="flex-grow overflow-y-auto p-4 space-y-4">
         {chatHistory.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-4 text-center">
