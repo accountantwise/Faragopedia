@@ -185,6 +185,7 @@ class WikiManager:
         self.system_prompt = self._load_system_prompt()
         self.llm = llm if llm else self._init_llm()
         self.ingest_llm = llm if llm else self._init_llm("ingest")
+        self.chat_llm = llm if llm else self._init_llm("chat")
         self._write_lock = asyncio.Lock()
 
         for d in [self.sources_dir, self.wiki_dir, self.archive_dir,
@@ -440,7 +441,7 @@ class WikiManager:
                 "Content:\n{content}"
             ))
         ])
-        chain = prompt | self.llm
+        chain = prompt | self.ingest_llm
         try:
             response = await chain.ainvoke({
                 "entity_type": entity_type,
@@ -762,7 +763,7 @@ class WikiManager:
             SystemMessagePromptTemplate.from_template("{system_prompt}"),
             HumanMessagePromptTemplate.from_template(ANSWER_HUMAN_TEMPLATE),
         ])
-        chain = prompt | self.llm
+        chain = prompt | self.chat_llm
         response = await chain.ainvoke({
             "system_prompt": self.system_prompt,
             "context": context,
@@ -809,7 +810,7 @@ class WikiManager:
             SystemMessagePromptTemplate.from_template("{system_prompt}"),
             HumanMessagePromptTemplate.from_template(RELEVANCE_HUMAN_TEMPLATE),
         ])
-        relevance_chain = relevance_prompt | self.llm
+        relevance_chain = relevance_prompt | self.chat_llm
         relevance_resp = await relevance_chain.ainvoke({
             "system_prompt": self.system_prompt,
             "index": catalog,

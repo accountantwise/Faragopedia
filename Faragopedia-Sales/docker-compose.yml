@@ -13,6 +13,8 @@ services:
     environment:
       - AI_PROVIDER=${AI_PROVIDER:-openai}
       - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
+      - CHAT_AI_PROVIDER=${CHAT_AI_PROVIDER}
+      - CHAT_AI_MODEL=${CHAT_AI_MODEL}
       - INGEST_AI_PROVIDER=${INGEST_AI_PROVIDER}
       - INGEST_AI_MODEL=${INGEST_AI_MODEL}
       - LINT_AI_PROVIDER=${LINT_AI_PROVIDER}
