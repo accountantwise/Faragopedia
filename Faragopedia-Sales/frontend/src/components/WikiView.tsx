@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import '../wiki-doc.css';
 import MDEditor from '@uiw/react-md-editor';
-import { FileText, ChevronRight, Loader2, ArrowLeft, ArrowRight, Edit3, Save, X, Trash2, Download, Plus, FilePlus, MoreVertical, MessageSquare, FolderPlus, Pencil, Search, ListChecks, MoveRight, List, Upload } from 'lucide-react';
+import { FileText, ChevronRight, Loader2, ArrowLeft, ArrowRight, Edit3, Save, X, Trash2, Download, Plus, FilePlus, MoreVertical, MessageSquare, FolderPlus, Pencil, Search, ListChecks, MoveRight, List, Upload, Link2, Tags, Sparkles } from 'lucide-react';
 
 import ChatPanel from './ChatPanel';
 import ImportWikiModal from './ImportWikiModal';
@@ -13,6 +13,8 @@ import { formatPageName } from '../utils/formatPageName';
 import ErrorToast from './ErrorToast';
 import ConfirmDialog from './ConfirmDialog';
 import MoveDialog from './MoveDialog';
+import octopusLight from '../assets/octopus-light.png';
+import octopusDark from '../assets/octopus-dark.png';
 
 type PageTree = Record<string, string[]>;
 
@@ -983,6 +985,9 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
     return Array.from(all).sort();
   })();
 
+  const totalPageCount = Object.values(pageTree).reduce((sum, pages) => sum + pages.length, 0);
+  const entityTypeCount = Object.keys(entityTypes).length;
+
   const highlightMatch = (text: string, query: string): React.ReactNode => {
     if (!query.trim()) return text;
     const idx = text.toLowerCase().indexOf(query.toLowerCase());
@@ -1659,9 +1664,77 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
             </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-600">
-              <FileText className="w-16 h-16 mb-4 opacity-20" />
-              <p>Select a page from the list to view its content.</p>
+            <div className="flex flex-col items-center justify-center h-full text-center px-6 overflow-y-auto py-10">
+              <img
+                src={octopusLight}
+                alt="Faragopedia"
+                className="w-28 h-28 mb-6 dark:hidden opacity-90"
+              />
+              <img
+                src={octopusDark}
+                alt="Faragopedia"
+                className="w-28 h-28 mb-6 hidden dark:block opacity-90"
+              />
+
+              {totalPageCount === 0 ? (
+                <>
+                  <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                    Welcome to your wiki
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mb-8 leading-relaxed">
+                    Faragopedia turns your source documents into a structured, linked knowledge base.
+                    Import files or create a page to get started — the AI will help organize what you bring in.
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+                    <button
+                      onClick={() => setShowNewPageMenu(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 transition-colors shadow-sm"
+                    >
+                      <FilePlus className="w-4 h-4" />
+                      New Page
+                    </button>
+                    <button
+                      onClick={() => selectedFolder && setShowImportModal(true)}
+                      disabled={!selectedFolder}
+                      title={selectedFolder ? 'Import markdown files' : 'Select a folder first'}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Import Pages
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl text-left">
+                    <div className="flex items-start gap-2.5">
+                      <Link2 className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Use <code className="text-gray-600 dark:text-gray-300">[[Page Name]]</code> to link pages together.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Tags className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Tag pages to filter and organize as your wiki grows.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Sparkles className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Open the AI chat to ask questions about anything in your wiki.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-base text-gray-500 dark:text-gray-400 mb-1">
+                    Select a page from the list to view its content.
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-600">
+                    {totalPageCount} page{totalPageCount !== 1 ? 's' : ''}
+                    {entityTypeCount > 0 && ` across ${entityTypeCount} ${entityTypeCount !== 1 ? 'sections' : 'section'}`}
+                  </p>
+                </>
+              )}
             </div>
           )}
         </div>
