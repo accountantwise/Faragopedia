@@ -1053,6 +1053,15 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Pages</h2>
             <div className="flex items-center space-x-1">
+              {!isDesktop && (
+                <button
+                  onClick={() => { setSelectedPage(null); setContent(null); setShowMobileList(false); }}
+                  className="p-1.5 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title="Wiki overview"
+                >
+                  <FileText className="w-4 h-4" />
+                </button>
+              )}
               <button
                 onClick={() => setShowNewFolderDialog(true)}
                 className="p-1.5 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -1673,16 +1682,16 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
             </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center px-6 overflow-y-auto py-10">
+            <div className="flex flex-col items-center h-full text-center px-6 overflow-y-auto py-10">
               <img
                 src={octopusLight}
                 alt="Faragopedia"
-                className="w-28 h-28 mb-6 dark:hidden opacity-90"
+                className="w-20 h-20 sm:w-28 sm:h-28 mb-6 mt-auto dark:hidden opacity-90 shrink-0"
               />
               <img
                 src={octopusDark}
                 alt="Faragopedia"
-                className="w-28 h-28 mb-6 hidden dark:block opacity-90"
+                className="w-20 h-20 sm:w-28 sm:h-28 mb-6 hidden dark:block opacity-90 shrink-0"
               />
 
               {totalPageCount === 0 ? (
@@ -1804,10 +1813,11 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
                   </div>
                 </>
               )}
+              <div className="mb-auto" />
             </div>
           )}
         </div>
-        
+
         {/* Floating Chat Button for Main Content */}
         {!showChat && selectedPage && (
           <button
