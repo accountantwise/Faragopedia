@@ -37,6 +37,7 @@ def client(tmp_path):
     mock_wm.get_page_content.return_value = "# Test Page"
     mock_wm.get_backlinks.return_value = []
     mock_wm.save_page_content = AsyncMock(return_value=[])
+    mock_wm.auto_rename_if_untitled = AsyncMock(return_value=None)
     mock_wm.archive_page = AsyncMock()
     mock_wm.create_new_page = AsyncMock(return_value="clients/Untitled.md")
     mock_wm.lint = AsyncMock(return_value=MagicMock(model_dump=lambda: {"findings": [], "summary": "Clean."}))

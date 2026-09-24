@@ -1,5 +1,5 @@
 import React from 'react';
-import { Book, MessageSquare, Layers, Archive, Activity, Settings } from 'lucide-react';
+import { Book, MessageSquare, Layers, Archive, Activity, Network, Settings } from 'lucide-react';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 interface SidebarProps {
@@ -29,6 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Wiki', icon: <Book className="w-5 h-5" /> },
     { name: 'Sources', icon: <Layers className="w-5 h-5" /> },
     { name: 'Chat', icon: <MessageSquare className="w-5 h-5" /> },
+    { name: 'Links', icon: <Network className="w-5 h-5" /> },
     { name: 'Archive', icon: <Archive className="w-5 h-5" /> },
     { name: 'Lint', icon: <Activity className="w-5 h-5" /> },
   ];

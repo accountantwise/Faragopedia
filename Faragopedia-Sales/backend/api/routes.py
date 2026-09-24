@@ -245,6 +245,18 @@ async def list_pages(wm: WM):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing pages: {str(e)}")
 
+@router.get("/pages/graph")
+async def get_link_graph(wm: WM):
+    """Return the full wikilink graph (nodes + edges + groups) in one pass.
+
+    Registered before GET /pages/{path:path} so 'graph' is not captured as a
+    page path. Avoids the N+1 pattern of calling /backlinks per page.
+    """
+    try:
+        return wm.get_link_graph()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error building link graph: {str(e)}")
+
 @router.get("/sources")
 async def list_sources(wm: WM):
     try:

@@ -47,6 +47,7 @@ current direction.
 | Linting System     | AI-powered + Snapshots| —        |
 | Tagging System     | Frontmatter + Shared  | —        |
 | External API Auth  | Cloudflare Access (Service Token) + backend API-key middleware | [ADR 0003](docs/decisions/0003-external-api-exposure-auth.md) |
+| Link View (Graph)  | Single-pass `GET /pages/graph` + hand-rolled SVG (no graph lib) | [ADR 0005](docs/decisions/0005-link-view-graph-architecture.md) |
 | Source-doc links   | Key + closed lookup table, `GET /api/job/{key}` -> 302 | [ADR 0006](docs/decisions/0006-source-document-link-resolver.md) |
 | Markdown rendering | react-markdown + **remark-gfm** — v9 core is CommonMark, so tables need it | - |
 
@@ -111,8 +112,9 @@ current direction.
 24. **Execute Entity Type Templates plan (Tasks 1–5)** — pure backend; spec + plan in `docs/superpowers/`; `main` branch
 25. **Add "estimated time remaining" to Lint View**
 26. **Monitor snapshot storage / add auto-pruning**
-27. **Implement Graph View**
+27. ~~Implement Graph View~~ ✅ (2026-07-04, merged to `main` + `vps-prod-deploy` and redeployed to production 2026-09-10) — shipped as **Link View** on branch `link-view`: grouped-grid wikilink map (not force-directed), hover/focus connection curves, docked reading panel, content search. Backend `GET /pages/graph` builds the whole graph in one pass (ADR 0005). Verified with 35/35 browser checks in light + dark. Deploy also added CI (none existed before) and fixed 4 flaky backend tests — full detail in `docs/status.md` 2026-09-10 entries.
 28. ~~Execute Web Search Sources plan (Faragopedia side)~~ ✅ (2026-05-19) — merged to `main`; 9 new tests passing; Phase 2 smoke test passed end-to-end. Wisecrawler-side `POST /v1/search` deployed with `BRAVE_API_KEY`. Known limitation: JS-rendered/auth-gated URLs (LinkedIn, paywalled sites) fail at Wisecrawler's analyze step — pre-existing crawler behaviour, not a web-search bug.
+29. ~~Author + critically review a 10-point growth roadmap~~ ✅ (2026-07-08) — production hardening, security remediation, auth, permissions/sharing, admin dashboard, routing/frontend refactor, version history, collaboration, semantic search/RAG, UX polish. Docs live in `roadmap/` at the repo root (sibling to this folder, not inside it); verdicts and evidence in `roadmap/00-review-log.md`. All 10 approved for build; sequencing in `roadmap/00-overview.md` — **01 (production hardening) and 02 (security remediation) are next**, since prod currently runs the dev server with no auth. Hand each doc to a build session one at a time.
 
 
 

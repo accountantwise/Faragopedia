@@ -40,9 +40,13 @@ type SearchIndex = {
 interface WikiViewProps {
   pagesMetadata: Record<string, { read: boolean; read_at: string | null }>;
   onMarkPageRead: (path: string) => void;
+  /** Page to open immediately, e.g. when navigating here from a chat link elsewhere. */
+  initialPagePath?: string | null;
+  /** Called once initialPagePath has been consumed, so the caller can clear it. */
+  onInitialPageConsumed?: () => void;
 }
 
-const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) => {
+const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, initialPagePath, onInitialPageConsumed }) => {
   const [pageTree, setPageTree] = useState<PageTree>({});
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
@@ -347,6 +351,13 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
       setContentLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!initialPagePath) return;
+    fetchPageContent(initialPagePath, true, true);
+    onInitialPageConsumed?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPagePath]);
 
   const handleSave = async () => {
     if (!selectedPage) return;
