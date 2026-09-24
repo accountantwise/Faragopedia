@@ -1,0 +1,44 @@
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ${DATA_DIR:-./}/workspaces:/app/workspaces
+      - ${DATA_DIR:-./}/wiki:/app/wiki
+      - ${DATA_DIR:-./}/sources:/app/sources
+      - ${DATA_DIR:-./}/snapshots:/app/snapshots
+      - ${DATA_DIR:-./}/archive:/app/archive
+      - ${DATA_DIR:-./}/schema:/app/schema
+    environment:
+      - AI_PROVIDER=${AI_PROVIDER:-openai}
+      - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
+      - CHAT_AI_PROVIDER=${CHAT_AI_PROVIDER}
+      - CHAT_AI_MODEL=${CHAT_AI_MODEL}
+      - INGEST_AI_PROVIDER=${INGEST_AI_PROVIDER}
+      - INGEST_AI_MODEL=${INGEST_AI_MODEL}
+      - LINT_AI_PROVIDER=${LINT_AI_PROVIDER}
+      - LINT_AI_MODEL=${LINT_AI_MODEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - WISECRAWLER_BASE_URL=${WISECRAWLER_BASE_URL}
+      - WISECRAWLER_API_KEY=${WISECRAWLER_API_KEY}
+      - FARAGOPEDIA_API_KEY=${FARAGOPEDIA_API_KEY}
+      - FARAGOPEDIA_API_HOSTNAME=${FARAGOPEDIA_API_HOSTNAME}
+    restart: always
+    networks:
+      - edge
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    restart: always
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true

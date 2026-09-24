@@ -29,6 +29,7 @@ Here is how to get the most out of the system based on best practices.
 
 * **Wiki View:** Your main hub. Browse through dynamically organized folders. Use the **search bar** and **tag chips** to quickly filter down to specific entities (e.g., find all entries tagged `#prospect` or `#apparel`).
 * **Sources View:** Review the raw files you’ve uploaded. You can browse, read, and manage (archive/download) these files here. You can also manually trigger ingestion for any pending files.
+* **Link View:** The whole wiki's crosslink structure in one map. Pages appear as pills grouped by entity type. **Hover** any page to light it up and draw curves to every page it links to (and every page that links back). **Click** a page to focus it and read its full contents in a side panel — wikilinks inside the panel are clickable, so you can browse page-to-page without leaving the map. The **search bar** filters the map to pages whose content matches. Press **Esc** or click the background to reset.
 * **Lint View:** The actionable checklist for your wiki's health. Review the AI's suggestions and apply fixes.
 
 ---

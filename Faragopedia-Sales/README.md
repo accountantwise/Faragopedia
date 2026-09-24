@@ -13,6 +13,7 @@ Faragopedia-Sales implements the **LLM Wiki** methodology. Unlike traditional RA
 - **Persistent Wiki**: Your knowledge is stored as standard Markdown files, making it completely portable.
 - **Multi-Provider Support**: Switch between OpenAI, Anthropic, Gemini, and OpenRouter via environment configuration.
 - **Interactive Chat**: Ask questions directly to your wiki and receive synthesized answers with citations.
+- **Link View**: See the whole wiki's crosslink structure at once — pages grouped by entity type, hover to trace connections, click to read any page in a side panel, and search by page content.
 - **Health Check**: Automatically identify orphan pages and broken links to keep your vault clean.
 
 ## Getting Started
