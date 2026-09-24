@@ -988,6 +988,15 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
   const totalPageCount = Object.values(pageTree).reduce((sum, pages) => sum + pages.length, 0);
   const entityTypeCount = Object.keys(entityTypes).length;
 
+  const sectionStats: Array<{ section: string; name: string; total: number; unread: number }> =
+    Object.entries(entityTypes).map(([section, typeData]) => {
+      const sectionPages = pageTree[section] || [];
+      const unread = sectionPages.filter(p => pagesMetadata[p]?.read === false).length;
+      return { section, name: typeData.name || section, total: sectionPages.length, unread };
+    }).sort((a, b) => b.total - a.total);
+
+  const totalUnreadCount = sectionStats.reduce((sum, s) => sum + s.unread, 0);
+
   const highlightMatch = (text: string, query: string): React.ReactNode => {
     if (!query.trim()) return text;
     const idx = text.toLowerCase().indexOf(query.toLowerCase());
@@ -1726,13 +1735,73 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead }) =>
                 </>
               ) : (
                 <>
-                  <p className="text-base text-gray-500 dark:text-gray-400 mb-1">
-                    Select a page from the list to view its content.
+                  <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                    Welcome to Faragopedia
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mb-2 leading-relaxed">
+                    Your team's structured, linked knowledge base — every source document ingested here
+                    becomes a searchable, cross-referenced wiki page. Select a page from the list to view
+                    its content, or ask the AI chat a question about anything below.
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-600">
-                    {totalPageCount} page{totalPageCount !== 1 ? 's' : ''}
-                    {entityTypeCount > 0 && ` across ${entityTypeCount} ${entityTypeCount !== 1 ? 'sections' : 'section'}`}
+                  <p className="text-xs text-gray-400 dark:text-gray-600 mb-8">
+                    {totalPageCount} page{totalPageCount !== 1 ? 's' : ''} across{' '}
+                    {entityTypeCount} {entityTypeCount !== 1 ? 'sections' : 'section'}
+                    {totalUnreadCount > 0 && ` · ${totalUnreadCount} unread`}
                   </p>
+
+                  {sectionStats.length > 0 && (
+                    <table className="w-full max-w-md text-sm text-left mb-10 border-collapse">
+                      <thead>
+                        <tr className="border-b border-gray-100 dark:border-gray-800">
+                          <th className="py-2 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Section</th>
+                          <th className="py-2 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider text-right">Pages</th>
+                          <th className="py-2 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider text-right">Unread</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sectionStats.map(stat => (
+                          <tr
+                            key={stat.section}
+                            onClick={() => { toggleSection(stat.section); setSelectedFolder(stat.section); }}
+                            className="border-b border-gray-50 dark:border-gray-800/60 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          >
+                            <td className="py-2 text-gray-700 dark:text-gray-300">{stat.name}</td>
+                            <td className="py-2 text-right text-gray-500 dark:text-gray-400">{stat.total}</td>
+                            <td className="py-2 text-right">
+                              {stat.unread > 0 ? (
+                                <span className="px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-500 text-white leading-none">
+                                  {stat.unread}
+                                </span>
+                              ) : (
+                                <span className="text-gray-300 dark:text-gray-600">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl text-left">
+                    <div className="flex items-start gap-2.5">
+                      <Link2 className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Use <code className="text-gray-600 dark:text-gray-300">[[Page Name]]</code> to link pages together.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Tags className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Tag pages to filter and organize as your wiki grows.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Sparkles className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Open the AI chat to ask questions about anything in your wiki.
+                      </p>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
