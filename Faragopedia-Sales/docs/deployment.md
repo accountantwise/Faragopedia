@@ -2,6 +2,16 @@
 
 This guide covers how to deploy Faragopedia-Sales using Docker, Docker Compose, and Portainer Stacks.
 
+> **Two live deployments exist.** The office NUC (dev/test — deploys from
+> `main`, dev-server frontend) and an OVHcloud VPS (production — deploys from
+> `vps-prod-deploy`, production nginx build, Cloudflare Tunnel, no open
+> ports). See [ADR 0007](decisions/0007-vps-production-deployment.md) for why
+> they differ and the [VPS production stack](#vps-production-stack) section
+> below for its specifics. **`vps-prod-deploy` does not track `main`
+> automatically** — after merging anything to `main`, merge `main` into
+> `vps-prod-deploy` and redeploy the VPS stack, or it silently serves stale
+> code (this has already happened once — see ADR 0007's Cons).
+
 ## Environment Variables
 
 The following variables can be configured in your `.env` file or passed as environment variables in Portainer.
@@ -84,6 +94,75 @@ permission to that token, or purge manually via the Cloudflare dashboard
 **Durable fixes (not yet implemented):** add a Cloudflare cache-bypass rule
 for the frontend hostname, or serve a production `vite build` (hashed asset
 filenames) instead of the dev server in the container.
+
+---
+
+## VPS Production Stack
+
+The VPS (OVHcloud, London, 4 vCPU / 8GB) hosts the production instance. Full
+rationale in [ADR 0007](decisions/0007-vps-production-deployment.md) — this
+section is the "how to touch it" reference.
+
+### Topology
+
+- **Branch:** `vps-prod-deploy` (long-lived, not a feature branch). Portainer
+  stack `faragopedia-vps` (endpoint `local`) deploys from
+  `Faragopedia-Sales/docker-compose.prod.yml` on this branch.
+- **Frontend build:** `frontend/Dockerfile.prod` — multi-stage, `vite build`
+  then served as static files by nginx. Separate from the NUC's
+  `frontend/Dockerfile` (Vite dev server) — do not conflate the two.
+- **Networking:** every container joins the Docker network `edge`, alongside
+  `portainer` and `cloudflared`. Nothing publishes a host port. Cloudflare
+  Tunnel `ovh-vps-portainer` is the only inbound path, routing by hostname to
+  a container's Docker DNS name (e.g. `http://backend:8300`).
+- **Public hostnames** (all on the `ai-wise.uk` zone, a **different**
+  Cloudflare account than the one this repo's other integrations use —
+  ask for the scoped API token rather than assuming account-wide access):
+
+  | Hostname | Routes to | Gate |
+  | --- | --- | --- |
+  | `portainer.ai-wise.uk` | Portainer UI | none (add one if this becomes long-lived) |
+  | `faragopedia-vps.ai-wise.uk` | frontend container | Cloudflare Access (email allowlist) |
+  | `faragopedia-backend-vps.ai-wise.uk` | backend container | none — this is what `VITE_API_BASE_URL` points at |
+  | `faragopedia-api-vps.ai-wise.uk` | backend container (same one) | `X-API-Key` via `FARAGOPEDIA_API_HOSTNAME` — external automation only |
+
+  **Do not point `VITE_API_BASE_URL` at the `-api-` hostname** — that's the
+  automation-only gated route; the frontend's own page-load `fetch()` calls
+  have no way to attach `X-API-Key` and every request 401s. Use the
+  `-backend-` hostname for anything the browser calls directly.
+
+### Redeploying after a `main` merge
+
+```bash
+git checkout vps-prod-deploy
+git merge origin/main
+git push origin vps-prod-deploy
+```
+
+Then trigger a rebuild via Portainer's API (no UI webhook is configured):
+
+```bash
+curl -X PUT "https://portainer.ai-wise.uk/api/stacks/1/git/redeploy?endpointId=3" \
+  -H "X-API-Key: $PORTAINER_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"repositoryReferenceName":"refs/heads/vps-prod-deploy","repositoryAuthentication":false,"pullImage":false}'
+```
+
+Confirm the rebuild actually happened — `docker ps` on the VPS should show
+both `faragopedia-vps-*` containers with a fresh `CREATED` time, and the
+response's `GitConfig.ConfigHash` should match the branch's latest commit.
+
+### Data
+
+Bind-mounted from the VPS host at `~/faragopedia-data/` (the `DATA_DIR` env
+var), under a **workspace-scoped** path —
+`~/faragopedia-data/workspaces/<workspace-id>/{wiki,sources,archive,snapshots,schema}/`
+— not the flat top-level layout the NUC's `.env.example` describes. This
+because the VPS instance went through the multi-workspace `create_workspace`
+path (via "Import from backup" on first setup) rather than the legacy
+single-workspace migration the NUC's checked-in `.env.example` was written
+against. Persists across `docker compose` rebuilds since it's a bind mount,
+not a named volume.
 
 ---
 

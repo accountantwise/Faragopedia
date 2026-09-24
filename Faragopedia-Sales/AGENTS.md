@@ -15,7 +15,7 @@
 | **Repo**     | `github.com/accountantwise/Faragopedia-Sales`            |
 | **Phase**    | 🟡 MVP Development / Settings Section + Entity Templates planned, ready to implement |
 | **Stack**    | Python/FastAPI + React/Vite                              |
-| **Deploy**   | Docker container → Portainer on Ubuntu server            |
+| **Deploy**   | Two Portainer stacks — NUC (dev/test, `main`) and OVHcloud VPS (production, `vps-prod-deploy`). See [Deployment](#deployment) below and [ADR 0007](docs/decisions/0007-vps-production-deployment.md). |
 
 ## Project Vision
 
@@ -122,17 +122,40 @@ current direction.
 
 ## Deployment
 
-### Target Environment
+Two separate deployments as of 2026-09-09 — see
+[ADR 0007](docs/decisions/0007-vps-production-deployment.md) for the full
+rationale. Full operational detail (hostnames, redeploy commands, data
+layout) lives in [`docs/deployment.md`](docs/deployment.md#vps-production-stack) —
+this section is only the summary an agent needs to orient.
 
-- **Host:** Ubuntu server (remote machine)
-- **Orchestration:** Portainer
-- **Workflow:** Push to GitHub → Import repo as Portainer stack → Deploy container
-- **Container:** Docker (base image TBD with stack)
+### NUC — dev/test
 
-### Files
+- **Host:** office NUC (Ubuntu)
+- **Branch:** `main`
+- **Frontend:** `frontend/Dockerfile` — Vite dev server (`npm run dev -- --host`)
+- **Workflow:** edit locally → push to GitHub → deploy/verify here first
 
-- `Dockerfile` — container build instructions (skeleton for now)
-- `docker-compose.yml` — service definitions for Portainer stack import
+### VPS — production
+
+- **Host:** OVHcloud VPS, London (4 vCPU / 8GB)
+- **Branch:** `vps-prod-deploy` — a long-lived branch, **not** a feature
+  branch. Does not track `main` automatically; merge `main` into it and
+  redeploy after any merge to `main`, or the VPS serves stale code.
+- **Frontend:** `frontend/Dockerfile.prod` — production `vite build`, served
+  by nginx. Never edit `frontend/Dockerfile` when the intent is a
+  production-facing change — that file is the NUC's dev server.
+- **Networking:** Cloudflare Tunnel, zero open inbound ports beyond SSH. Two
+  backend hostnames — one for the frontend's own calls, one gated by
+  `X-API-Key` for external automation. Getting this backwards breaks the
+  wiki UI itself (every page load 401s) — see ADR 0007 before changing either.
+- **Promoted here only after verification on the NUC.**
+
+### Orchestration (both)
+
+- Portainer, deploying from a GitHub repository stack (no `docker-compose up`
+  by hand on either host).
+- `docker-compose.yml` (NUC) / `docker-compose.prod.yml` (VPS) — service
+  definitions for the respective Portainer stack.
 
 ---
 
