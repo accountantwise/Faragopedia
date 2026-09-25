@@ -17,7 +17,7 @@ designed yet.
   Merged to `main` via PR #13; not on `vps-prod-deploy` (tooling only).
 - A configured copy of the toolkit (with `.env`, the private correction plan and a warm
   Wikidata cache) sits in the worktree `.worktrees/wiki-maintenance-toolkit` of the local clone
-  (`Nextcloud/AI/VS Code/Faragopedia-V2`). Nick's main checkout has his own uncommitted work
+  (`Nextcloud/AI/AI-Wise/04_Projects/Client-Projects/FaragoProjects-Faragopedia`). Nick's main checkout has his own uncommitted work
   on `docs/vps-deployment-handoff` — work in a new worktree, never there.
 
 ## The rules to enforce in the app
