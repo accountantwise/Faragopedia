@@ -44,7 +44,7 @@ TODAY = dt.date.today()
 ACTIVE_WINDOW = dt.timedelta(days=548)  # 18 months: leaves room for contact time between jobs
 CACHE = HERE / "enrichment-cache"
 # Wikimedia throttles clients without contact info; a repo URL satisfies their UA policy without a personal email
-WD_UA = {"User-Agent": "FaragopediaEnrichment/1.0 (+https://github.com/accountantwise/Faragopedia-Sales-V2)"}
+WD_UA = {"User-Agent": "FaragopediaEnrichment/1.0 (+https://github.com/accountantwise/Faragopedia)"}
 BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"}
 
 FIELD_ORDER = ["name", "parent_group", "brands", "website", "instagram", "linkedin", "industry",
