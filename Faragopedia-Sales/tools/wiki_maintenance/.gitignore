@@ -1,0 +1,7 @@
+.env
+# plans and outputs hold live contact data (freelancer phones/emails, page diffs)
+plans/
+out/
+# public Wikidata/Wikipedia lookups, regenerated on demand
+enrichment-cache/
+__pycache__/
