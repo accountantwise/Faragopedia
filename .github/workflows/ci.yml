@@ -26,6 +26,21 @@ jobs:
           AI_MODEL: gpt-4o-mini
         run: pytest
 
+  wiki-maintenance-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Faragopedia-Sales/tools/wiki_maintenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run offline tests
+        run: python -m pytest -q tests
+
   frontend-build:
     runs-on: ubuntu-latest
     defaults:

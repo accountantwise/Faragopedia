@@ -49,7 +49,9 @@ coverage/
 docker-data/
 
 # -- AI agent working files --
-.claude/
+# Local settings/worktrees stay private; shared skills are committed.
+.claude/*
+!.claude/skills/
 .gemini/
 .superpowers/
 

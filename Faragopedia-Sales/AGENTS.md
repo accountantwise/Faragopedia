@@ -50,6 +50,7 @@ current direction.
 | Link View (Graph)  | Single-pass `GET /pages/graph` + hand-rolled SVG (no graph lib) | [ADR 0005](docs/decisions/0005-link-view-graph-architecture.md) |
 | Source-doc links   | Key + closed lookup table, `GET /api/job/{key}` -> 302 | [ADR 0006](docs/decisions/0006-source-document-link-resolver.md) |
 | Markdown rendering | react-markdown + **remark-gfm** — v9 core is CommonMark, so tables need it | - |
+| Wiki data maintenance | `tools/wiki_maintenance/` scripts (external API, dry-run default) + `/.claude/skills/faragopedia-*`; notes/link/status rules | [ADR 0008](docs/decisions/0008-wiki-maintenance-toolkit.md) |
 
 ---
 
@@ -185,3 +186,9 @@ AGENTS.md          ← You are here. The single source of truth.
    should only contain agent-specific configuration, not project context.
 6. **Prefer this file** over agent-specific memory systems for anything another
    agent would need to know.
+7. **Wiki content work follows `tools/wiki_maintenance/README.md`.** After ANY AI
+   processing that writes wiki pages (ingest, enrichment, merges, fixes), run
+   `tools/wiki_maintenance/clear_notes.py` — `notes` stays empty except values
+   starting `HUMAN:` (a flag for a person to check something). Wikilinks must be
+   real paths (`[[contacts/slug]]`, `[[companies/slug]]`), never raw names; never
+   merge duplicate pages without a human's confirmation. See ADR 0008.
