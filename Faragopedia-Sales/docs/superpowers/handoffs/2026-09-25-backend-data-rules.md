@@ -5,6 +5,20 @@
 apply after the fact (ADR 0008 "Cons"). Start with a brainstorm/spec with Nick; nothing is
 designed yet.
 
+## Update 2026-10-27 — read first
+
+- Still not started, but part of it now exists: `backend/agent/data_lint.py` (ADR 0009) runs
+  deterministic data rules at the start of every Lint, and `tools/callsheet_ingest/quarantine.py`
+  checks pages before an import creates them. Those are *detect* and *block-at-import*; this task
+  is *enforce on every write path*. Fold both into the one `data_rules.py` so the rules live once
+  (ADR 0009 "Cons" names the duplication).
+- New rule from the 2026-10-26 incident to add to the list below: a contact whose company is
+  Farago Projects (or who is Farago staff) never gets a pipeline `relationship`.
+- The local clone is `Nextcloud/AI/VS Code/Faragopedia-V2` (the AI-Wise path below no longer
+  exists); the toolkit worktree is `.worktrees/wiki-maintenance-toolkit` under it.
+- `rebuild_interaction_history.py` now lives in `tools/callsheet_ingest/` and takes client
+  names from the company page.
+
 ## Where things stand
 
 - Production wiki (VPS) was rebuilt on 2026-09-24/25: 305 company pages on the entity-type
