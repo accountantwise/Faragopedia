@@ -1,0 +1,15 @@
+{
+ "_about": "Shape of a correction_pass.py plan. Copy to plans/<date>.json (ignored by git) and fill in. Every merge must be verified by a human first.",
+ "merges": {"survivor-slug": ["loser-slug"]},
+ "client_fixes": {"callsheets/0000-example-job.md": "company-slug"},
+ "new_companies": [
+  {"name": "Example Brand", "industry": "fashion-luxury", "parent_group": "Example Group"}
+ ],
+ "new_contacts": [
+  {"name": "Jane Example", "company": "example-agency", "title": "Agent", "department": "Artist Management",
+   "phone": "", "email": "", "city": "London",
+   "represents": ["contacts/some-photographer", "Photographer"],
+   "callsheet": "callsheets/0000-example-job.md",
+   "human": "HUMAN: optional note for a person to check"}
+ ]
+}

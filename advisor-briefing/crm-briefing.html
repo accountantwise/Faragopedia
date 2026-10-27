@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why not just buy a CRM? — Farago BD system briefing</title>
+<style>
+  html, body { margin: 0; padding: 0; }
+  img { max-width: 100%; }
+  @media print {
+    .page { padding: 0 !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
+    section, .loop-wrap, .card, .panel, .cmp, .timepanel, .bottomline { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --paper: #EBEDEC;
+    --surface: #FBFCFB;
+    --surface-2: #F2F4F3;
+    --ink: #14201F;
+    --ink-soft: #4C5856;
+    --ink-faint: #7A8582;
+    --line: #D4DAD8;
+    --line-strong: #BFC7C4;
+    --teal: #0F6E68;
+    --teal-ink: #0B4E4A;
+    --teal-soft: #DEEAE8;
+    --amber: #B4671E;
+    --amber-ink: #8A4E15;
+    --amber-soft: #F0E4D3;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0D1413;
+      --surface: #151F1D;
+      --surface-2: #1B2624;
+      --ink: #E9EEEC;
+      --ink-soft: #A6B1AE;
+      --ink-faint: #74807D;
+      --line: #26302E;
+      --line-strong: #34403D;
+      --teal: #4CB6AB;
+      --teal-ink: #7FCFC6;
+      --teal-soft: #12302D;
+      --amber: #D6934A;
+      --amber-ink: #E4AE70;
+      --amber-soft: #2A2116;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #EBEDEC; --surface: #FBFCFB; --surface-2: #F2F4F3;
+    --ink: #14201F; --ink-soft: #4C5856; --ink-faint: #7A8582;
+    --line: #D4DAD8; --line-strong: #BFC7C4;
+    --teal: #0F6E68; --teal-ink: #0B4E4A; --teal-soft: #DEEAE8;
+    --amber: #B4671E; --amber-ink: #8A4E15; --amber-soft: #F0E4D3;
+  }
+  :root[data-theme="dark"] {
+    --paper: #0D1413; --surface: #151F1D; --surface-2: #1B2624;
+    --ink: #E9EEEC; --ink-soft: #A6B1AE; --ink-faint: #74807D;
+    --line: #26302E; --line-strong: #34403D;
+    --teal: #4CB6AB; --teal-ink: #7FCFC6; --teal-soft: #12302D;
+    --amber: #D6934A; --amber-ink: #E4AE70; --amber-soft: #2A2116;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .page {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(20px, 5vw, 64px) 20px;
+    min-height: 100vh;
+  }
+  .sheet {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* ---- header ---- */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+  }
+  .eyebrow .sep { color: var(--line-strong); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(32px, 5.5vw, 52px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 26px 0 0;
+  }
+  .thesis {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.4vw, 22px);
+    line-height: 1.42;
+    color: var(--ink-soft);
+    max-width: 40em;
+    text-wrap: pretty;
+    margin: 18px 0 0;
+  }
+  .thesis b { color: var(--ink); font-weight: 600; }
+
+  /* ---- section scaffolding ---- */
+  section { margin-top: clamp(36px, 6vw, 56px); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .kicker::before {
+    content: "";
+    width: 22px; height: 1px;
+    background: var(--teal);
+    display: inline-block;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    margin: 0 0 14px;
+  }
+  p { margin: 0 0 14px; max-width: 62ch; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ---- the loop diagram ---- */
+  .loop-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(22px, 4vw, 34px);
+    overflow-x: auto;
+  }
+  .loop-legend {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+  .loop-legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .dot.teal { background: var(--teal); }
+  .dot.amber { background: var(--amber); }
+
+  .loop {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px 8px;
+    align-items: stretch;
+    min-width: 620px;
+  }
+  .node {
+    border-radius: 11px;
+    padding: 14px 14px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+  }
+  .node.amber { background: var(--amber-soft); border: 1px solid color-mix(in srgb, var(--amber) 32%, transparent); }
+  .node.teal  { background: var(--teal-soft);  border: 1px solid color-mix(in srgb, var(--teal) 32%, transparent); }
+  .node .n {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .node.amber .n { color: var(--amber-ink); }
+  .node.teal .n  { color: var(--teal-ink); }
+  .node .t {
+    font-weight: 650;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .node .d {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 15px;
+  }
+  .loop-return {
+    margin-top: 16px;
+    border-top: 1px dashed var(--line-strong);
+    padding-top: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 620px;
+  }
+  .loop-return .arc {
+    font-family: var(--mono);
+    color: var(--teal);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .loop-return p {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .loop-return b { color: var(--ink); font-weight: 650; }
+
+  @media (max-width: 640px) {
+    .loop { grid-template-columns: 1fr auto; min-width: 0; }
+    .loop .arrow { transform: rotate(90deg); }
+    .loop-return { min-width: 0; flex-direction: column; gap: 6px; }
+  }
+
+  /* ---- three differentiators ---- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 20px 22px;
+  }
+  .card .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--teal);
+    letter-spacing: 0.1em;
+  }
+  .card h3 {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 8px 0 8px;
+    text-wrap: balance;
+  }
+  .card p { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+  .card .stat {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+  .card .stat b { color: var(--amber-ink); font-weight: 700; }
+
+  /* ---- comparison table ---- */
+  .cmp {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .cmp-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; }
+  thead th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 14px 18px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    vertical-align: bottom;
+  }
+  thead th.own { color: var(--teal); }
+  tbody td {
+    padding: 13px 18px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.dim { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
+  tbody td.own { color: var(--ink); }
+
+  /* ---- time cost ---- */
+  .timepanel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 4vw, 30px); }
+  .tcaption { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+  .timerow { display: grid; grid-template-columns: 128px 1fr 92px; gap: 16px; align-items: center; padding: 7px 0; }
+  .tlabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink); line-height: 1.35; }
+  .tlabel .tsub { display: block; color: var(--ink-faint); font-size: 9.5px; letter-spacing: 0.01em; text-transform: none; }
+  .tbar-track { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; height: 24px; overflow: hidden; }
+  .tbar { height: 100%; border-radius: 6px 0 0 6px; }
+  .tbar.manual { background: var(--amber); }
+  .tbar.auto { background: var(--teal); }
+  .tval { font-family: var(--mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .timefoot { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .multi { font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 5.5vw, 44px); color: var(--teal); line-height: 0.95; white-space: nowrap; text-align: center; }
+  .multi span { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); font-weight: 400; margin-top: 6px; }
+  .timefoot p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+  .timefoot b { color: var(--ink); font-weight: 650; }
+  @media (max-width: 620px) { .timefoot { grid-template-columns: 1fr; gap: 12px; } .multi { font-size: 34px; } }
+
+  /* ---- cost + honesty split ---- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 620px) { .split { grid-template-columns: 1fr; } }
+  .panel {
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid var(--line);
+  }
+  .panel.cost { background: var(--surface); }
+  .panel.fair { background: var(--surface-2); }
+  .panel h3 {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+  .panel ul { margin: 0; padding: 0; list-style: none; }
+  .panel li {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    padding: 8px 0 8px 22px;
+    position: relative;
+    border-top: 1px solid var(--line);
+  }
+  .panel li:first-child { border-top: none; }
+  .panel.cost li::before { content: "+"; position: absolute; left: 0; color: var(--amber); font-family: var(--mono); font-weight: 700; }
+  .panel.fair li::before { content: "\2713"; position: absolute; left: 0; color: var(--teal); font-family: var(--mono); }
+  .panel li b { color: var(--ink); font-weight: 650; }
+  .panel .fig { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--amber-ink); font-weight: 700; white-space: nowrap; }
+  .panel .foot { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-strong); font-size: 13px; color: var(--ink); }
+  .panel .foot b { color: var(--teal-ink); }
+
+  /* ---- bottom line ---- */
+  .bottomline {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 14px;
+    padding: clamp(26px, 4.5vw, 40px);
+    margin-top: clamp(36px, 6vw, 56px);
+  }
+  .bottomline .kicker { color: color-mix(in srgb, var(--amber) 75%, white); }
+  .bottomline .kicker::before { background: color-mix(in srgb, var(--amber) 75%, white); }
+  .bottomline p {
+    font-family: var(--serif);
+    font-size: clamp(19px, 2.7vw, 25px);
+    line-height: 1.4;
+    color: var(--surface);
+    max-width: 40em;
+    text-wrap: pretty;
+  }
+  :root[data-theme="light"] .bottomline p, :root:not([data-theme]) .bottomline p { color: #EBEDEC; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) .bottomline { background: #05100E; } }
+  :root[data-theme="dark"] .bottomline { background: #05100E; }
+  .bottomline b { color: var(--amber-ink); font-weight: 600; }
+  .bottomline .amb { color: color-mix(in srgb, var(--amber) 78%, white); }
+
+  footer {
+    margin-top: 30px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { opacity: 0; transform: translateY(10px); animation: rise 0.6s cubic-bezier(0.2,0.7,0.2,1) forwards; }
+    .reveal:nth-child(2) { animation-delay: 0.05s; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+  }
+</style>
+
+<div class="page">
+  <div class="sheet">
+
+    <header>
+      <div class="eyebrow">
+        <span>Internal briefing</span><span class="sep">/</span>
+        <span>For advisors</span><span class="sep">/</span>
+        <span>Farago BD system</span><span class="sep">/</span>
+        <span>July 2026</span>
+      </div>
+      <h1 class="reveal">Why not just buy a CRM?</h1>
+      <p class="thesis reveal">
+        A CRM is a <b>system of record</b> — a filing cabinet someone has to fill in by hand.
+        What we built is a <b>system of intelligence</b>: it finds the leads, verifies the contacts,
+        writes the record, and turns every meeting into knowledge that compounds. The real choice
+        isn't &ldquo;CRM vs. this.&rdquo; It's <b>a database someone must feed</b> vs. <b>a loop that feeds itself.</b>
+      </p>
+    </header>
+
+    <section>
+      <div class="kicker">The engine</div>
+      <h2>One closed loop, across two purpose-built systems</h2>
+      <p>
+        The RocketReach lead engine and the Faragopedia knowledge graph aren't two tools bolted together —
+        they form a cycle. Research flows into outreach; outreach flows into institutional memory;
+        and that memory calibrates the next round of research. A CRM sits at one point on this loop
+        (storage) and leaves every other step to a human.
+      </p>
+      <div class="loop-wrap">
+        <div class="loop-legend">
+          <span><i class="dot amber"></i> Lead engine &nbsp;(RocketReach&#8202;·&#8202;Sheets)</span>
+          <span><i class="dot teal"></i> Knowledge graph &nbsp;(Faragopedia)</span>
+        </div>
+        <div class="loop">
+          <div class="node amber">
+            <span class="n">01 · Auto</span>
+            <span class="t">Prospect</span>
+            <span class="d">AI drafts fresh target companies every Monday, tuned to real client fit.</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="node amber">
+            <span class="n">02 · Auto</span>
+            <span class="t">Enrich</span>
+            <span class="d">RocketReach verifies email, title &amp; location from the LinkedIn profile.</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="node amber">
+            <span class="n">03 · Human</span>
+            <span class="t">Outreach</span>
+            <span class="d">Pre-filled rows land in the sheet Siobahn already works in. She just picks who to pursue.</span>
+          </div>
+          <div class="node teal">
+            <span class="n">04 · Trigger</span>
+            <span class="t">Meeting booked</span>
+            <span class="d">Marking a win auto-syncs the record into the knowledge base.</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="node teal">
+            <span class="n">05 · Auto</span>
+            <span class="t">Knowledge graph</span>
+            <span class="d">A linked wiki page is written &amp; cross-referenced — people, companies, context.</span>
+          </div>
+        </div>
+        <div class="loop-return">
+          <span class="arc">&#8617; compounds back</span>
+          <p><b>The step a CRM can't do:</b> accumulated intelligence about who we know, why they mattered, and what worked feeds straight back into next week's targeting. The system gets sharper every cycle — on its own.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">What it does differently</div>
+      <h2>Three things a subscription CRM structurally will not do</h2>
+      <div class="cards">
+        <div class="card">
+          <span class="num">01</span>
+          <h3>It finds who to approach — not just their email</h3>
+          <p>Modern CRMs can enrich a contact from a name and company — but only as a paid add-on, and only once you've decided who that contact is. Ours does the deciding: it proposes fit-calibrated targets each week, verifies them, and writes them in.</p>
+          <span class="stat">Per contact: <b>~30 min of hunting &rarr; 3&ndash;5 sec</b></span>
+        </div>
+        <div class="card">
+          <span class="num">02</span>
+          <h3>Knowledge compounds instead of sitting in fields</h3>
+          <p>A CRM stores flat records. Faragopedia builds a self-maintaining knowledge graph — every meeting enriches an interlinked web of people, companies and context, with the AI keeping links and summaries current.</p>
+          <span class="stat">Output = <b>institutional memory</b>, not a contact list</span>
+        </div>
+        <div class="card">
+          <span class="num">03</span>
+          <h3>It lives where the work already happens</h3>
+          <p>No new tool to adopt, no migration, no seats to train. Prospects surface in the Google Sheet Siobahn already uses; intelligence surfaces in a wiki anyone on the team can read.</p>
+          <span class="stat">Adoption cost: <b>zero new software</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">Side by side</div>
+      <h2>Same job, two very different machines</h2>
+      <div class="cmp">
+        <div class="cmp-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%"></th>
+                <th style="width:39%">Off-the-shelf CRM</th>
+                <th class="own" style="width:39%">Farago BD system</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="dim">Finding leads</td>
+                <td>You research and type them in</td>
+                <td class="own">AI proposes calibrated targets weekly</td>
+              </tr>
+              <tr>
+                <td class="dim">Contact data</td>
+                <td>Add a paid enrichment add-on, then map fields</td>
+                <td class="own">RocketReach-verified, written in automatically</td>
+              </tr>
+              <tr>
+                <td class="dim">Keeping it current</td>
+                <td>Manual data entry &amp; hygiene</td>
+                <td class="own">AI maintains pages, links &amp; contradictions</td>
+              </tr>
+              <tr>
+                <td class="dim">Knowledge model</td>
+                <td>Flat records in fixed fields</td>
+                <td class="own">Interlinked knowledge graph that compounds</td>
+              </tr>
+              <tr>
+                <td class="dim">Where you work</td>
+                <td>A separate app the team must adopt</td>
+                <td class="own">The spreadsheet &amp; wiki already in use</td>
+              </tr>
+              <tr>
+                <td class="dim">Ownership</td>
+                <td>Rented; intelligence leaves when you cancel</td>
+                <td class="own">Portable markdown files we own outright</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">The cost a CRM hides — time</div>
+      <h2>The bottleneck was never the software. It was the hours.</h2>
+      <p>A CRM — even with a paid enrichment add-on — still runs on human time: someone decides who to chase, hunts down the email and title, keys it in, and later digs back through records to recover the context. Automating that research is where the hours come back.</p>
+      <div class="timepanel">
+        <div class="tcaption">Research &amp; enrichment · per contact</div>
+        <div class="timerow">
+          <span class="tlabel">By hand<span class="tsub">CRM + manual research</span></span>
+          <div class="tbar-track"><div class="tbar manual" style="width:100%"></div></div>
+          <span class="tval">~20–30 min</span>
+        </div>
+        <div class="timerow">
+          <span class="tlabel">Automated<span class="tsub">Farago lead engine</span></span>
+          <div class="tbar-track"><div class="tbar auto" style="width:4%"></div></div>
+          <span class="tval">3–5 sec</span>
+        </div>
+        <div class="timefoot">
+          <span class="multi">10–30×<span>more throughput</span></span>
+          <p>Freed from the research grind, one person works through <b>10–30× the prospects</b> — a week of hunting collapses into an afternoon. And it <b>scales</b>: a single run handles 5 contacts or 500 at essentially the same time cost, so more volume no longer means another hire. Retrieval is the same story — context that takes minutes to dig out of a CRM's notes is <b>one search</b> here.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker">On cost &amp; on fairness</div>
+      <h2>The honest accounting</h2>
+      <div class="split">
+        <div class="panel cost">
+          <h3>What the off-the-shelf route actually costs</h3>
+          <ul>
+            <li>CRM <b>seats</b> — <span class="fig">$12–$175+</span> per user / month, billed annually</li>
+            <li>A <b>data-enrichment</b> add-on to auto-fill contacts — <span class="fig">~$49–$99/mo</span>, or <span class="fig">~$0.20+</span> per contact beyond plan credits</li>
+            <li><b>Integration middleware</b> (Zapier / Make) to wire it together</li>
+            <li><b>Onboarding &amp; setup</b> — <span class="fig">$1,500–$3,500</span> one-time, plus certified consultants at <span class="fig">$100–$300/hr</span></li>
+            <li>&hellip; and you'd <b>still do the prospecting by hand</b></li>
+          </ul>
+          <p class="foot">Typical 2026 market pricing. The sticker price is only the first line — seats, enrichment, middleware and setup stack into the real total, and none of it decides who to approach for you.</p>
+        </div>
+        <div class="panel fair">
+          <h3>Where a CRM genuinely wins</h3>
+          <ul>
+            <li>Mature <b>deal-pipeline</b> mechanics &amp; forecasting</li>
+            <li>Native <b>email &amp; calendar</b> logging</li>
+            <li><b>Multi-user</b> permissions and large-team workflows</li>
+            <li>Out-of-the-box <b>dashboards</b>, mobile apps, vendor support</li>
+          </ul>
+          <p class="foot">We deliberately don't compete on sales-funnel mechanics for a big team. This is built for a focused BD workflow — and if we ever need pipeline mechanics, <b>this loop can feed a CRM rather than be replaced by one.</b></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottomline">
+      <div class="kicker">Bottom line</div>
+      <p>
+        A CRM would give us a <span class="amb">differently-organised place to store contacts we'd still have to find ourselves.</span>
+        This gives us the contacts, the context, and a knowledge base that compounds —
+        inside the tools the team already uses. It isn't a cheaper CRM.
+        It's a different, and for our purpose better, machine.
+      </p>
+    </div>
+
+    <footer>
+      <span>Farago Projects · BD intelligence system</span>
+      <span>Live in production since July 2026 · 159 automated tests</span>
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

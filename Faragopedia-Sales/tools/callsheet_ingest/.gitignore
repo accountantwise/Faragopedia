@@ -1,0 +1,10 @@
+.env
+# dry-run output and pre-write backups hold live contact data (freelancer phones/emails)
+out/
+backups/
+# never copy the extracts or the staff list in here (see README: they live outside the repo)
+callsheets-md/
+wiki-pages/
+manifest.json
+__pycache__/
+aliases*.json

@@ -9,6 +9,7 @@ import zipfile
 from pydantic import BaseModel, Field
 from typing import List, Dict, Literal
 from agent.schema_builder import discover_entity_types, build_schema_md, bootstrap_type_yamls
+from agent import data_lint
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -875,7 +876,13 @@ class WikiManager:
         if not wiki_content.strip():
             return LintReport(findings=[], summary="Wiki is empty — nothing to lint.")
 
+        # Deterministic data rules first (agent/data_lint.py): shapes a bad import produces,
+        # checked in code rather than left for the LLM to notice.
+        rule_findings = [LintFinding(**f) for f in data_lint.run_rules(self.wiki_dir)]
         report = await self._run_lint_llm(wiki_content)
+        if rule_findings:
+            report = LintReport(findings=rule_findings + report.findings,
+                                summary=f"{len(rule_findings)} data-rule finding(s); {report.summary}")
         self._append_to_log("lint", report.summary)
         return report
 
@@ -967,6 +974,14 @@ class WikiManager:
         })
 
     async def fix_lint_findings(self, findings: List[LintFinding]) -> FixReport:
+        # Data-rule findings are fixed by hand (re-import, merge, archive); an LLM rewrite of
+        # a junk page or a shifted row would only hide the upstream problem.
+        by_hand = [f for f in findings if f.description.startswith(data_lint.PREFIX)]
+        findings = [f for f in findings if not f.description.startswith(data_lint.PREFIX)]
+        by_hand_notes = [f"{f.description} — {f.fix_description}" for f in by_hand]
+        if not findings:
+            return FixReport(files_changed=[], skipped=by_hand_notes, snapshot_id="",
+                             summary=f"Nothing auto-fixed: {len(by_hand)} data-rule finding(s) need a manual fix.")
         wiki_content = ""
         for rel_path in self.list_pages():
             full_path = os.path.join(self.wiki_dir, rel_path.replace("/", os.sep))
@@ -994,7 +1009,7 @@ class WikiManager:
 
         return FixReport(
             files_changed=files_changed,
-            skipped=fix_plan.skipped,
+            skipped=fix_plan.skipped + by_hand_notes,
             summary=fix_plan.summary,
             snapshot_id=snapshot.id,
         )

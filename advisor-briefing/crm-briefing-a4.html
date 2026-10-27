@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why not just buy a CRM? — one-page A4 briefing</title>
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --surface: #FBFCFB;
+    --surface-2: #F1F4F3;
+    --ink: #14201F;
+    --ink-soft: #47534F;
+    --ink-faint: #7A8582;
+    --line: #D4DAD8;
+    --line-strong: #BFC7C4;
+    --teal: #0F6E68;
+    --teal-ink: #0B4E4A;
+    --teal-soft: #E1ECEA;
+    --amber: #B4671E;
+    --amber-ink: #8A4E15;
+    --amber-soft: #F2E7D6;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #d9dedd; }
+
+  @page { size: A4; margin: 0; }
+
+  .sheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 12px auto;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 12mm 13mm 10mm;
+    font-size: 9.1px;
+    line-height: 1.4;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+  }
+  @media print {
+    html, body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; width: auto; min-height: auto; }
+  }
+
+  /* header */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 7.4px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; gap: 9px; flex-wrap: wrap; align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 7px;
+  }
+  .eyebrow .sep { color: var(--line-strong); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 27px;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    margin: 11px 0 0;
+  }
+  .thesis {
+    font-family: var(--serif);
+    font-size: 11px;
+    line-height: 1.34;
+    color: var(--ink-soft);
+    margin: 7px 0 0;
+    max-width: 62em;
+  }
+  .thesis b { color: var(--ink); font-weight: 600; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 7.2px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .kicker::before { content:""; width: 16px; height: 1px; background: var(--teal); display: inline-block; }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.1;
+    margin: 0 0 7px;
+  }
+
+  .block { margin-top: 11px; }
+
+  /* loop */
+  .loop-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 12px 12px;
+  }
+  .loop-legend {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 7.2px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px;
+  }
+  .loop-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .dot.teal { background: var(--teal); } .dot.amber { background: var(--amber); }
+  .loop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px 5px; }
+  .node { border-radius: 7px; padding: 8px 9px 9px; display: flex; flex-direction: column; gap: 3px; }
+  .node.amber { background: var(--amber-soft); border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); }
+  .node.teal  { background: var(--teal-soft);  border: 1px solid color-mix(in srgb, var(--teal) 30%, transparent); }
+  .node .n { font-family: var(--mono); font-size: 6.6px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .node.amber .n { color: var(--amber-ink); } .node.teal .n { color: var(--teal-ink); }
+  .node .t { font-weight: 700; font-size: 9.6px; line-height: 1.12; color: var(--ink); }
+  .node .d { font-size: 7.8px; line-height: 1.3; color: var(--ink-soft); }
+  .arrow { display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-family: var(--mono); font-size: 11px; }
+  .loop-return {
+    margin-top: 9px; border-top: 1px dashed var(--line-strong); padding-top: 8px;
+    display: flex; align-items: baseline; gap: 9px;
+  }
+  .loop-return .arc { font-family: var(--mono); color: var(--teal); font-size: 7.6px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .loop-return p { margin: 0; font-size: 8.2px; line-height: 1.32; color: var(--ink-soft); }
+  .loop-return b { color: var(--ink); font-weight: 700; }
+
+  /* two-column body */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 11px; }
+  .col { display: flex; flex-direction: column; gap: 11px; }
+
+  /* differentiators */
+  .diff { display: flex; flex-direction: column; gap: 6px; }
+  .drow {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 9px; display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start;
+  }
+  .drow .num { font-family: var(--mono); font-size: 11px; color: var(--teal); font-weight: 600; line-height: 1; padding-top: 1px; }
+  .drow h3 { font-family: var(--serif); font-size: 10.2px; font-weight: 600; line-height: 1.12; margin: 0 0 2px; }
+  .drow p { margin: 0; font-size: 8px; line-height: 1.32; color: var(--ink-soft); }
+  .drow .stat { display: block; margin-top: 4px; font-family: var(--mono); font-size: 7.6px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .drow .stat b { color: var(--amber-ink); font-weight: 700; }
+
+  /* comparison table */
+  .cmp { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  table { border-collapse: collapse; width: 100%; }
+  thead th {
+    text-align: left; font-family: var(--mono); font-size: 6.8px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-soft); padding: 6px 8px; background: var(--surface-2); border-bottom: 1px solid var(--line); vertical-align: bottom;
+  }
+  thead th.own { color: var(--teal); }
+  tbody td { padding: 5px 8px; font-size: 7.8px; line-height: 1.26; border-bottom: 1px solid var(--line); color: var(--ink-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.dim { font-family: var(--mono); font-size: 6.6px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-faint); }
+  tbody td.own { color: var(--ink); }
+
+  /* cost + fairness panels */
+  .panel { border-radius: 6px; padding: 9px 10px; border: 1px solid var(--line); }
+  .panel.cost { background: var(--surface); }
+  .panel.fair { background: var(--surface-2); }
+  .panel h3 { font-family: var(--serif); font-size: 10.4px; font-weight: 600; margin: 0 0 6px; line-height: 1.12; }
+  .panel ul { margin: 0; padding: 0; list-style: none; }
+  .panel li { font-size: 7.9px; line-height: 1.3; color: var(--ink-soft); padding: 4px 0 4px 14px; position: relative; border-top: 1px solid var(--line); }
+  .panel li:first-child { border-top: none; }
+  .panel.cost li::before { content: "+"; position: absolute; left: 0; color: var(--amber); font-family: var(--mono); font-weight: 700; }
+  .panel.fair li::before { content: "\2713"; position: absolute; left: 0; color: var(--teal); font-family: var(--mono); }
+  .panel li b { color: var(--ink); font-weight: 700; }
+  .panel .fig { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--amber-ink); font-weight: 700; white-space: nowrap; }
+  .timeband { margin-top: 9px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 8px 12px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; }
+  .tb-k { display: block; font-family: var(--mono); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
+  .tb-line { font-size: 8.6px; line-height: 1.35; color: var(--ink-soft); }
+  .tb-line b { color: var(--ink); font-weight: 700; }
+  .tb-fast { color: var(--teal-ink); font-family: var(--mono); }
+  .tb-right { display: grid; grid-template-columns: auto 152px; gap: 9px; align-items: center; }
+  .tb-multi { font-family: var(--serif); font-weight: 700; font-size: 21px; color: var(--teal); line-height: 1; }
+  .tb-sub { font-size: 7px; line-height: 1.32; color: var(--ink-faint); }
+  .panel .foot { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line-strong); font-size: 7.9px; line-height: 1.32; color: var(--ink); }
+  .panel .foot b { color: var(--teal-ink); font-weight: 700; }
+
+  /* bottom line */
+  .bottomline { background: var(--ink); color: #EDEFEE; border-radius: 8px; padding: 12px 14px; margin-top: 11px; }
+  .bottomline .kicker { color: #E0A867; }
+  .bottomline .kicker::before { background: #E0A867; }
+  .bottomline p { margin: 0; font-family: var(--serif); font-size: 12px; line-height: 1.32; color: #EDEFEE; }
+  .bottomline .amb { color: #E6B071; }
+
+  footer {
+    margin-top: auto; padding-top: 9px; border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 6.8px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">
+      <span>Internal briefing</span><span class="sep">/</span>
+      <span>For advisors</span><span class="sep">/</span>
+      <span>Farago BD system</span><span class="sep">/</span>
+      <span>July 2026</span>
+    </div>
+    <h1>Why not just buy a CRM?</h1>
+    <p class="thesis">
+      A CRM is a <b>system of record</b> — a filing cabinet someone has to fill in by hand. What we built is a
+      <b>system of intelligence</b>: it finds the leads, verifies the contacts, writes the record, and turns every
+      meeting into knowledge that compounds. The real choice isn't &ldquo;CRM vs. this.&rdquo; It's
+      <b>a database someone must feed</b> vs. <b>a loop that feeds itself.</b>
+    </p>
+  </header>
+
+  <div class="block">
+    <div class="kicker">The engine — one closed loop across two purpose-built systems</div>
+    <div class="loop-wrap">
+      <div class="loop-legend">
+        <span><i class="dot amber"></i> Lead engine (RocketReach · Sheets)</span>
+        <span><i class="dot teal"></i> Knowledge graph (Faragopedia)</span>
+      </div>
+      <div class="loop">
+        <div class="node amber"><span class="n">01 · Auto</span><span class="t">Prospect</span><span class="d">AI drafts fresh target companies weekly, tuned to real client fit.</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="node amber"><span class="n">02 · Auto</span><span class="t">Enrich</span><span class="d">RocketReach verifies email, title &amp; location from LinkedIn.</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="node amber"><span class="n">03 · Human</span><span class="t">Outreach</span><span class="d">Pre-filled rows land in the sheet she already uses. She picks who to pursue.</span></div>
+        <div class="node teal"><span class="n">04 · Trigger</span><span class="t">Meeting booked</span><span class="d">Marking a win auto-syncs the record into the knowledge base.</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="node teal"><span class="n">05 · Auto</span><span class="t">Knowledge graph</span><span class="d">A linked wiki page is written &amp; cross-referenced automatically.</span></div>
+      </div>
+      <div class="loop-return">
+        <span class="arc">&#8617; compounds back</span>
+        <p><b>The step a CRM can't do:</b> accumulated intelligence about who we know, why they mattered, and what worked feeds straight back into next week's targeting. The system sharpens every cycle — on its own.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div>
+        <div class="kicker">Three things a subscription CRM won't do</div>
+        <div class="diff">
+          <div class="drow">
+            <span class="num">01</span>
+            <div>
+              <h3>It finds who to approach, not just their email</h3>
+              <p>CRMs can enrich a contact from a name &amp; company — but only as a paid add-on, once you've decided who that is. Ours does the deciding: fit-calibrated targets each week, verified and written in.</p>
+              <span class="stat">Per contact: <b>~30 min of hunting &rarr; 3&ndash;5 sec</b></span>
+            </div>
+          </div>
+          <div class="drow">
+            <span class="num">02</span>
+            <div>
+              <h3>Knowledge compounds instead of sitting in fields</h3>
+              <p>A CRM stores flat records. Faragopedia builds a self-maintaining knowledge graph — every meeting enriches an interlinked web of people, companies &amp; context.</p>
+              <span class="stat">Output = <b>institutional memory</b>, not a list</span>
+            </div>
+          </div>
+          <div class="drow">
+            <span class="num">03</span>
+            <div>
+              <h3>It lives where the work already happens</h3>
+              <p>No new tool, no migration, no seats to train. Prospects surface in the Google Sheet in use; intelligence surfaces in a wiki anyone can read.</p>
+              <span class="stat">Adoption cost: <b>zero new software</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel cost">
+        <h3>What the off-the-shelf route actually costs</h3>
+        <ul>
+          <li>CRM <b>seats</b> — <span class="fig">$12–$175+</span> per user / month</li>
+          <li>A <b>data-enrichment</b> add-on to auto-fill contacts — <span class="fig">~$49–$99/mo</span> or <span class="fig">~$0.20+</span>/contact overage</li>
+          <li><b>Integration middleware</b> (Zapier / Make) to wire it together</li>
+          <li><b>Onboarding</b> <span class="fig">$1,500–$3,500</span>; certified consultants <span class="fig">$100–$300/hr</span></li>
+          <li>&hellip; and you'd <b>still prospect by hand</b></li>
+        </ul>
+        <p class="foot">Typical 2026 market pricing. The sticker price is only the first line — and none of it decides who to approach for you.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div>
+        <div class="kicker">Same job, two very different machines</div>
+        <div class="cmp">
+          <table>
+            <thead>
+              <tr><th style="width:24%"></th><th style="width:38%">Off-the-shelf CRM</th><th class="own" style="width:38%">Farago BD system</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="dim">Finding leads</td><td>You research &amp; type them in</td><td class="own">AI proposes calibrated targets weekly</td></tr>
+              <tr><td class="dim">Contact data</td><td>Paid add-on, then map fields</td><td class="own">RocketReach-verified, written in for you</td></tr>
+              <tr><td class="dim">Staying current</td><td>Manual entry &amp; hygiene</td><td class="own">AI maintains pages, links &amp; conflicts</td></tr>
+              <tr><td class="dim">Knowledge model</td><td>Flat records, fixed fields</td><td class="own">Interlinked graph that compounds</td></tr>
+              <tr><td class="dim">Where you work</td><td>A separate app to adopt</td><td class="own">The sheet &amp; wiki already in use</td></tr>
+              <tr><td class="dim">Ownership</td><td>Rented; intel leaves on cancel</td><td class="own">Portable files we own outright</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel fair">
+        <h3>Where a CRM genuinely wins</h3>
+        <ul>
+          <li>Mature <b>deal-pipeline</b> mechanics &amp; forecasting</li>
+          <li>Native <b>email &amp; calendar</b> logging</li>
+          <li><b>Multi-user</b> permissions &amp; large-team workflows</li>
+          <li>Out-of-the-box <b>dashboards</b>, mobile apps, vendor support</li>
+        </ul>
+        <p class="foot">We deliberately don't compete on funnel mechanics for a big team. This is built for a focused BD workflow — and if we ever need pipeline mechanics, <b>this loop can feed a CRM rather than be replaced by one.</b></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeband">
+    <div class="tb-left">
+      <span class="tb-k">The cost a CRM hides — time</span>
+      <span class="tb-line">Research &amp; enrich, per contact: <b>~20–30 min</b> by hand → <b class="tb-fast">3–5 sec</b> automated. Retrieval that takes minutes of digging in a CRM is one search here.</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-multi">10–30×</span>
+      <span class="tb-sub">more throughput — one run handles 5 contacts or 500 at the same time cost, so volume never means another hire</span>
+    </div>
+  </div>
+
+  <div class="bottomline">
+    <div class="kicker">Bottom line</div>
+    <p>A CRM would give us a <span class="amb">differently-organised place to store contacts we'd still have to find ourselves.</span> This gives us the contacts, the context, and a knowledge base that compounds — inside the tools the team already uses. It isn't a cheaper CRM. It's a different, and for our purpose better, machine.</p>
+  </div>
+
+  <footer>
+    <span>Farago Projects · BD intelligence system</span>
+    <span>Live in production since July 2026 · 159 automated tests</span>
+  </footer>
+
+</div>
+</body>
+</html>

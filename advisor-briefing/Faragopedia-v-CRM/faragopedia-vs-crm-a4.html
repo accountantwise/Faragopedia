@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why not just use a CRM? — Faragopedia one-page A4 briefing</title>
+<style>
+  :root {
+    --paper: #FFFFFF; --surface: #FBFCFB; --surface-2: #F1F4F3;
+    --ink: #14201F; --ink-soft: #47534F; --ink-faint: #7A8582;
+    --line: #D4DAD8; --line-strong: #BFC7C4;
+    --teal: #0F6E68; --teal-ink: #0B4E4A; --teal-soft: #E1ECEA;
+    --amber: #B4671E; --amber-ink: #8A4E15;
+    --crm: #727D79; --crm-ink: #545D5A; --crm-soft: #E7EAE9; --on-teal: #FFFFFF;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #d9dedd; }
+  @page { size: A4; margin: 0; }
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 12px auto; background: var(--paper); color: var(--ink);
+    font-family: var(--sans); padding: 11mm 13mm 9mm; font-size: 9.1px; line-height: 1.4;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.18); display: flex; flex-direction: column;
+  }
+  @media print { html, body { background: #fff; } .sheet { margin: 0; box-shadow: none; width: auto; min-height: auto; } }
+
+  .eyebrow { font-family: var(--mono); font-size: 7.4px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; gap: 9px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 7px; }
+  .eyebrow .sep { color: var(--line-strong); }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: 26px; line-height: 1.0; letter-spacing: -0.01em; margin: 10px 0 0; }
+  .thesis { font-family: var(--serif); font-size: 10.8px; line-height: 1.34; color: var(--ink-soft); margin: 7px 0 0; max-width: 64em; }
+  .thesis b { color: var(--ink); font-weight: 600; }
+
+  .kicker { font-family: var(--mono); font-size: 7.2px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+  .kicker::before { content:""; width: 16px; height: 1px; background: var(--teal); display: inline-block; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 13.5px; line-height: 1.1; margin: 0 0 6px; }
+  .block { margin-top: 10px; }
+
+  /* hero */
+  .hero-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: stretch; }
+  .hc-side { display: flex; flex-direction: column; gap: 6px; }
+  .hc-tag { font-family: var(--mono); font-size: 6.8px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .hc-side.crm .hc-tag { color: var(--crm-ink); } .hc-side.fpa .hc-tag { color: var(--teal); }
+  .hc-vs { align-self: center; font-family: var(--serif); font-style: italic; color: var(--ink-faint); font-size: 13px; }
+  .hero-cap { font-size: 7.6px; line-height: 1.34; color: var(--ink-soft); margin: 0; }
+
+  .rec { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+  .rec-head { font-family: var(--mono); font-size: 6.6px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--crm-ink); background: var(--crm-soft); padding: 5px 9px; border-bottom: 1px solid var(--line); }
+  .rec-row { display: grid; grid-template-columns: 58px 1fr; gap: 7px; padding: 4.5px 9px; border-bottom: 1px solid var(--line); font-size: 8.4px; }
+  .rec-row:last-child { border-bottom: none; }
+  .rec-row .k { font-family: var(--mono); font-size: 6.4px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint); align-self: center; }
+  .rec-row .v { color: var(--ink); } .rec-row .v.empty { color: var(--crm); font-style: italic; }
+
+  .graph { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 7px; flex: 1; display: flex; align-items: center; }
+  .graph svg { width: 100%; height: auto; display: block; }
+  .gedge { stroke: var(--teal); stroke-width: 1.6; opacity: 0.5; }
+  .gnode rect { fill: var(--teal-soft); stroke: var(--teal); stroke-width: 1.4; }
+  .gnode.hub rect { fill: var(--teal); stroke: var(--teal); }
+  .gnode text { fill: var(--ink); font-family: var(--sans); font-size: 12.5px; font-weight: 600; text-anchor: middle; }
+  .gnode.hub text { fill: var(--on-teal); font-size: 13.5px; }
+
+  .hero-note { margin-top: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 8px; line-height: 1.36; color: var(--ink-soft); display: flex; align-items: baseline; gap: 8px; }
+  .hero-note .arc { font-family: var(--mono); color: var(--teal); font-size: 7px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .hero-note b { color: var(--ink); font-weight: 700; }
+
+  /* body cols */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+
+  .diff { display: flex; flex-direction: column; gap: 6px; }
+  .drow { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 9px; display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; }
+  .drow .num { font-family: var(--mono); font-size: 11px; color: var(--teal); font-weight: 600; line-height: 1; padding-top: 1px; }
+  .drow h3 { font-family: var(--serif); font-size: 10px; font-weight: 600; line-height: 1.12; margin: 0 0 2px; }
+  .drow p { margin: 0; font-size: 7.8px; line-height: 1.32; color: var(--ink-soft); }
+  .drow .stat { display: block; margin-top: 4px; font-family: var(--mono); font-size: 7.4px; color: var(--ink); }
+  .drow .stat b { color: var(--amber-ink); font-weight: 700; }
+
+  .cmp { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  table { border-collapse: collapse; width: 100%; }
+  thead th { text-align: left; font-family: var(--mono); font-size: 6.6px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); padding: 5px 8px; background: var(--surface-2); border-bottom: 1px solid var(--line); vertical-align: bottom; }
+  thead th.own { color: var(--teal); }
+  tbody td { padding: 4.5px 8px; font-size: 7.6px; line-height: 1.26; border-bottom: 1px solid var(--line); color: var(--ink-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.dim { font-family: var(--mono); font-size: 6.3px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-faint); }
+  tbody td.own { color: var(--ink); }
+
+  .panel { border-radius: 6px; padding: 9px 10px; border: 1px solid var(--line); }
+  .panel.cost { background: var(--surface); } .panel.fair { background: var(--surface-2); }
+  .panel h3 { font-family: var(--serif); font-size: 10px; font-weight: 600; margin: 0 0 6px; line-height: 1.12; }
+  .panel ul { margin: 0; padding: 0; list-style: none; }
+  .panel li { font-size: 7.7px; line-height: 1.3; color: var(--ink-soft); padding: 4px 0 4px 14px; position: relative; border-top: 1px solid var(--line); }
+  .panel li:first-child { border-top: none; }
+  .panel.cost li::before { content: "+"; position: absolute; left: 0; color: var(--amber); font-family: var(--mono); font-weight: 700; }
+  .panel.fair li::before { content: "\2713"; position: absolute; left: 0; color: var(--teal); font-family: var(--mono); }
+  .panel li b { color: var(--ink); font-weight: 700; }
+  .panel .fig { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--amber-ink); font-weight: 700; white-space: nowrap; }
+  .panel .foot { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line-strong); font-size: 7.7px; line-height: 1.32; color: var(--ink); }
+  .panel .foot b { color: var(--teal-ink); font-weight: 700; }
+
+  .bottomline { background: var(--ink); color: #EDEFEE; border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+  .bottomline .kicker { color: #E0A867; } .bottomline .kicker::before { background: #E0A867; }
+  .bottomline p { margin: 0; font-family: var(--serif); font-size: 11.5px; line-height: 1.32; color: #EDEFEE; }
+  .bottomline .amb { color: #E6B071; } .bottomline b { color: #E6B071; font-weight: 600; }
+
+  footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 6.8px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">
+      <span>Internal briefing</span><span class="sep">/</span>
+      <span>For advisors</span><span class="sep">/</span>
+      <span>Faragopedia — standalone view</span><span class="sep">/</span>
+      <span>July 2026</span>
+    </div>
+    <h1>Why not just use a CRM?</h1>
+    <p class="thesis">
+      A CRM is a <b>system of record</b> — structured slots you fill in and later struggle to read back.
+      Faragopedia is a <b>system of understanding</b>: it reads your material, writes it up as interlinked pages,
+      and keeps the whole thing current on its own. The question was never &ldquo;which is the better CRM?&rdquo;
+      It's that <b>no CRM does this at all</b> — and this is the capability the business actually lacked.
+    </p>
+  </header>
+
+  <div class="block">
+    <div class="kicker">The core difference — two ways to hold what you know</div>
+    <div class="hero-compare">
+      <div class="hc-side crm">
+        <span class="hc-tag">A CRM record</span>
+        <div class="rec">
+          <div class="rec-head">Contact · Jane Okafor</div>
+          <div class="rec-row"><span class="k">Name</span><span class="v">Jane Okafor</span></div>
+          <div class="rec-row"><span class="k">Company</span><span class="v empty">— not filled in</span></div>
+          <div class="rec-row"><span class="k">Email</span><span class="v empty">— not filled in</span></div>
+          <div class="rec-row"><span class="k">Stage</span><span class="v">Lead</span></div>
+          <div class="rec-row"><span class="k">Notes</span><span class="v empty">free text, rarely re-read</span></div>
+        </div>
+        <p class="hero-cap">Structured slots, siloed from every other record — empty until a human fills them in.</p>
+      </div>
+      <div class="hc-vs">vs.</div>
+      <div class="hc-side fpa">
+        <span class="hc-tag">The same person in Faragopedia</span>
+        <div class="graph">
+          <svg viewBox="0 0 460 300" role="img" aria-label="Knowledge graph: Jane Okafor linked to a company, a project, a colleague, a call and a decision">
+            <line class="gedge" x1="230" y1="150" x2="88"  y2="46"/>
+            <line class="gedge" x1="230" y1="150" x2="378" y2="46"/>
+            <line class="gedge" x1="230" y1="150" x2="60"  y2="165"/>
+            <line class="gedge" x1="230" y1="150" x2="108" y2="258"/>
+            <line class="gedge" x1="230" y1="150" x2="372" y2="256"/>
+            <g class="gnode"><rect x="28" y="32" width="120" height="28" rx="7"/><text x="88" y="50">Farago Projects</text></g>
+            <g class="gnode"><rect x="316" y="32" width="124" height="28" rx="7"/><text x="378" y="50">Brand X launch</text></g>
+            <g class="gnode"><rect x="8"  y="151" width="104" height="28" rx="7"/><text x="60" y="169">Tunde Adeyemi</text></g>
+            <g class="gnode"><rect x="46" y="244" width="124" height="28" rx="7"/><text x="108" y="262">Call &#183; 12 Jun</text></g>
+            <g class="gnode"><rect x="306" y="242" width="132" height="28" rx="7"/><text x="372" y="260">Budget approved</text></g>
+            <g class="gnode hub"><rect x="176" y="134" width="108" height="32" rx="8"/><text x="230" y="155">Jane Okafor</text></g>
+          </svg>
+        </div>
+        <p class="hero-cap">One node in a graph you can see — every link written &amp; maintained by the AI, traceable to its source.</p>
+      </div>
+    </div>
+    <div class="hero-note">
+      <span class="arc">the crux</span>
+      <p><b>The difference isn't cosmetic:</b> a record stores fields; a graph stores meaning. Every advantage below follows from that one distinction.</p>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div>
+        <div class="kicker">Three things a subscription CRM won't do</div>
+        <div class="diff">
+          <div class="drow">
+            <span class="num">01</span>
+            <div>
+              <h3>It reads and writes itself</h3>
+              <p>Drop in a document, email, web article or PDF and the AI pulls out what matters, updates the right pages &amp; wires up cross-references. A CRM's fields stay empty until a human types.</p>
+              <span class="stat">Ingestion: <b>source in &rarr; linked pages out</b></span>
+            </div>
+          </div>
+          <div class="drow">
+            <span class="num">02</span>
+            <div>
+              <h3>Knowledge is linked, not filed</h3>
+              <p>Every person, company &amp; project is a node in a graph you can see whole (Link View). A CRM can filter a list; it can't show you the shape of what you know.</p>
+              <span class="stat">View: <b>the whole network</b>, not one record</span>
+            </div>
+          </div>
+          <div class="drow">
+            <span class="num">03</span>
+            <div>
+              <h3>It keeps itself honest</h3>
+              <p>A built-in health check finds orphaned pages, broken links, stale claims &amp; contradictions — and proposes fixes. CRM data quietly rots because nobody audits it.</p>
+              <span class="stat">Upkeep: <b>AI-audited</b>, not left to rot</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel cost">
+        <h3>What a CRM leaves you paying for anyway</h3>
+        <ul>
+          <li>Per-seat CRM <b>fees</b> — <span class="fig">$12–$175+</span>/user/mo — plus onboarding <span class="fig">$1,500–$3,500</span></li>
+          <li>A separate <b>wiki / knowledge base</b> (Notion, Confluence) — a CRM can't hold synthesised knowledge</li>
+          <li>An <b>AI or search add-on</b> to make any of it retrievable</li>
+          <li>The <b>human hours</b> to keep notes written, linked &amp; current</li>
+        </ul>
+        <p class="foot">Typical 2026 market pricing — and it's rented: even fully paid-up, a CRM can't read a document, link it, or keep it current.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div>
+        <div class="kicker">Same person, two very different objects</div>
+        <div class="cmp">
+          <table>
+            <thead>
+              <tr><th style="width:26%"></th><th style="width:37%">Off-the-shelf CRM</th><th class="own" style="width:37%">Faragopedia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="dim">What it holds</td><td>Records in fixed fields</td><td class="own">Interlinked pages of synthesised knowledge</td></tr>
+              <tr><td class="dim">Getting data in</td><td>Manual entry into forms</td><td class="own">AI reads docs, web &amp; PDFs, writes pages</td></tr>
+              <tr><td class="dim">Free-text notes</td><td>Buried, rarely re-read</td><td class="own">Synthesised into linked, maintained pages</td></tr>
+              <tr><td class="dim">Relationships</td><td>Filtered lists &amp; kanban</td><td class="own">A visual knowledge graph (Link View)</td></tr>
+              <tr><td class="dim">Staying accurate</td><td>Degrades; no audit</td><td class="own">AI health-check flags stale &amp; conflicting claims</td></tr>
+              <tr><td class="dim">Ownership</td><td>Rented; export is painful</td><td class="own">Plain markdown we self-host &amp; own</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel fair">
+        <h3>Where a CRM genuinely wins</h3>
+        <ul>
+          <li>Deal <b>pipeline</b>, quotes &amp; forecasting — Faragopedia has no sales funnel</li>
+          <li>Native <b>email &amp; calendar</b> logging</li>
+          <li><b>Multi-user</b> accounts &amp; permissions — Faragopedia's MVP is single-tenant today (on the roadmap)</li>
+          <li>Structured <b>dashboards</b>, mobile apps, vendor support</li>
+        </ul>
+        <p class="foot">Faragopedia isn't a CRM replacement — it's the <b>institutional-memory layer</b> a CRM has never provided. Run a CRM for the pipeline if we need one; let Faragopedia hold the understanding.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottomline">
+    <div class="kicker">Bottom line</div>
+    <p>A CRM would give us <span class="amb">tidy records we'd still have to read, maintain and connect ourselves.</span> Faragopedia reads our material, links it, keeps it current, and shows us the whole picture — self-hosted and ours. A CRM remembers what we typed. This <b>understands what we know.</b></p>
+  </div>
+
+  <footer>
+    <span>Farago Projects · Faragopedia knowledge system</span>
+    <span>Functional MVP · self-hosted · 260+ automated tests</span>
+  </footer>
+
+</div>
+</body>
+</html>
