@@ -1,0 +1,385 @@
+# Controlled vocabulary for callsheet role labels.
+#
+# Seeded from the 331 distinct role labels found across the first 39 extracted
+# callsheets, so the aliases below are observed in the real archive, not invented.
+#
+# `wiki_keep` governs what reaches the Faragopedia page — NOT what gets extracted. The
+# raw extract in callsheets-md/ keeps every person on the sheet regardless.
+#
+# THE OPERATIVE RULE IS SENIORITY, NOT DEPARTMENT (Simon, 8-25 and 8-31): "It's not
+# going to be an exhaustive list that we've got, but anything that's a director or
+# important, obviously we want to keep it... If in doubt, it's probably best to keep it.
+# Anyone but an assistant, really."
+#
+# The brief's Section 2b six-role list was initially read as exhaustive. It is not.
+#
+# Applied literally that rule yields 46 people on one McQueen sheet, against the
+# 13-person page Simon reviewed and approved the same day. Both are his words and they
+# do not reconcile, so the vocabulary takes the middle (decided 2026-09-01, Nick):
+# heads of department and director-level roles are shown, the technical bench is not.
+# Revisit once Farago have used a real page — the rollout is ship-then-feedback.
+#
+# When extraction hits a label that fits nothing here, it writes `other` and reports it.
+# Extend this file from those reports; never widen a mapping to make a near-match fit.
+#
+# `other` IS NOT SHOWN ON THE WIKI — reversed 2026-09-07 (Nick), seeing it on a real
+# page. It is still reported on every run, and that report is now the only thing standing
+# between an uncatalogued role and silent omission, so it has to be read.
+#
+# ⚠ THIS IS THE RISKIEST EXCLUSION IN THIS FILE, and it is not symmetrical with the
+# others. Every other tier is a bounded set of aliases you can read; `other` is by
+# definition whatever the vocabulary has not catalogued. The corpus carries 331 distinct
+# role labels across 39 callsheets with 51% appearing exactly once, so at 91 jobs this
+# bucket will be large, and the earlier reasoning still holds on its own terms: an
+# uncatalogued role may well be a head of department we have not seen yet, and hiding one
+# silently drops someone the client wanted.
+#
+# The mitigation is procedural, not technical: extend this file from the `other` reports
+# after each run, so the bucket shrinks toward genuinely-irrelevant roles. If those
+# reports stop being read, people will go missing from the wiki with no signal.
+#
+# ---------------------------------------------------------------------------------
+# SECTION HEADERS ARE THE PRIMARY DISAMBIGUATOR (validated 2026-08-31)
+#
+# Callsheets group people under section headings, and the heading resolves ambiguity
+# that the role label alone cannot:
+#
+#   CLIENT                        -> client-side. NOTE: a job can carry TWO client-side
+#                                    organisations — the brand and its agency (job 549:
+#                                    "RANGE ROVER" and "PROJECT 3" as separate sections).
+#   CREATIVE / PHOTO / MOTION     -> the shooting crew
+#   STYLING / GLAM / SET DESIGN   -> department leads plus their assistants
+#   TALENT                        -> models and talent
+#   PRODUCTION | FARAGO PROJECTS  -> the production team for the job (see caution below)
+#   SUPPLIERS, CATERING & HOSPITAL-> organisations, not people
+#
+# "PRODUCER" under CLIENT is a brand producer; under PRODUCTION | FARAGO PROJECTS it is
+# a Farago producer. Same string, different canonical role. Never map from the string
+# alone when a section heading is available.
+#
+# ⚠ CAUTION, corrected 2026-09-01: the PRODUCTION | FARAGO PROJECTS heading does NOT
+# mean "Farago staff". It groups the production team for that job, most of whom are
+# freelance. On the McQueen 23 Jan sheet, only 1 of the 7 people under that heading is
+# on Farago's staff list — the Producer and Production Manager are both freelancers.
+#
+# An earlier note here claimed the heading settled the brief's Section 3 Q1 and made a
+# staff list unnecessary. That was wrong. The heading gives the ROLE grouping; employment
+# status needs the staff list Simon supplied (see staff_list.py). Two separate questions.
+# ---------------------------------------------------------------------------------
+
+roles:
+  photographer:
+    wiki_keep: true
+    aliases: [Photographer, Photographers, Lead Photographer]
+    # Deliberately NOT aliases: Photo Assistant, Social Photographer,
+    # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
+    # High string similarity, different person.
+
+  director:
+    # Simon, 8-31: "anything that's a director or important, obviously we want to keep it."
+    # Note this is NOT a catch-all for every "* Director" — art_director, casting_director
+    # and set-design roles resolve separately, per his own distinction: "we would want art
+    # director or director of art put together, but not creative director or set director."
+    wiki_keep: true
+    aliases:
+      - Director
+      - Photography Director
+      - Creative Director
+      - Group Creative Director
+      - Visual Director
+      - Studio Director
+      - Design Director
+      - Brand Director
+
+  client_contact:
+    wiki_keep: true
+    # A job may have both a brand and an agency client-side (Range Rover + Project 3).
+    # Record which organisation each person belongs to; do not merge them.
+    # Identified by a "(Client)" or "(Client - <Brand>)" marker rather than by title —
+    # the titles are brand-side job titles and vary without limit.
+    marker: '\(Client\b'
+    aliases:
+      - Client Lead
+      - Brand Director (Client)
+      - Founder & CEO (Client)
+      - Head of Art and Studio (Client)
+      - Head of Entertainment Marketing (Client)
+      - Social Media Manager (Client)
+      - Senior Producer (Client)
+      - Junior AD (Client)
+      - Design Director Brand Creative (Client - Adidas)
+      - Global Snr Comms Manager (Client - Adidas)
+
+  production_lead:
+    wiki_keep: true
+    # The production team Farago fielded for the job — a ROLE grouping, not an
+    # employment status. Most of these people are freelance: on the McQueen 23 Jan
+    # sheet only 1 of the 7 under PRODUCTION | FARAGO PROJECTS is on the staff list
+    # (Simon, 2026-09-02). Employment status comes from staff_list.py and is
+    # resolved at ingestion, never written into the extract. Renamed from
+    # `farago_producer` on 2026-09-03, which asserted in-house status it cannot know.
+    # These are the only people who reliably carry email addresses on the sheets.
+    aliases:
+      - Producer
+      - Shoot Producer
+      - Senior Producer
+      - Snr Producer
+      - Senior Shoot Producer
+      - Executive Producer
+      - Head of Production
+      - Production Manager
+      - Production Coordinator
+      - Producer, Farago Projects
+    # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
+    # reliable than the title: 'Producer' also appears under CLIENT.
+    # NOT: Production Assistant (48 occurrences, the single most common label in the
+    # corpus, and an assistant rather than a producer).
+
+  casting_director:
+    wiki_keep: true
+    aliases: [Casting Director]
+
+  stylist_lead:
+    wiki_keep: true
+    aliases: [Stylist, Head of Styling, Fashion Editor, Womenswear Editor]
+    # NOT: Styling Assistant, Stylist Assistant, Junior Fashion Editor.
+
+  hair_lead:
+    wiki_keep: true
+    aliases: [Hair Stylist, Hair]
+    # NOT: Hair Assistant.
+
+  makeup_lead:
+    wiki_keep: true
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Groomer, Manicurist, Nail Artist]
+    # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
+
+  art_director:
+    # CONFIRMED by Simon 2026-08-31, having been absent from the brief's keep-list:
+    # "anything that's a director or important, obviously we want to keep it."
+    wiki_keep: true
+    aliases: [Art Director, Head of Art Direction, Art Direction]
+    # NOT: Art Direction Assistant, Art Director Assistant, Art Director Agent.
+
+  agent:
+    # RELATIONAL KEEP — an agent is kept only if the person they represent is kept.
+    # The brief says "Photographer (+ their agent)": the agent rides along with their
+    # principal, they are not independently interesting. A flat keep put Gary Card's
+    # agent on the page while Gary Card himself (set designer, crew) was dropped.
+    wiki_keep: represents
+    # On the wiki, do NOT give the agent their own row. Merge onto the principal's row
+    # as "contact via", because the agent is the contact route, not a separate person of
+    # interest: across the corpus 45% of agent rows carry a phone number against 3% of
+    # principal rows. This also satisfies the GDPR decision for free — the agency number
+    # is a business contact, not someone's personal mobile.
+    wiki_layout: merge_into_principal
+    # Always record who they represent in the company/agency column.
+    # `Agent (Photographer)`, `Photographer Agent` and `Agent (for Joe Bazalgette)`
+    # are the same role expressed three ways.
+    aliases:
+      - Agent
+      - Photographer Agent
+      - Agent (Photographer)
+      - Stylist Agent
+      - Stylist's Agent
+      - Agent (Stylist)
+      - Agent (Hair)
+      - Agent (Makeup)
+      - Agent (DOP)
+      - Agent (Model)
+      - Talent Agent
+      - Art Director Agent
+      - Set Designer Agent
+
+  crew:
+    # KEPT. Reversed 2026-09-01 from wiki_keep: false, on Simon's rule stated twice:
+    #   8-31: "anything that's a director or important, obviously we want to keep it...
+    #          If in doubt, it's probably best to keep it. Anyone but an assistant, really."
+    #   8-25: "We don't need to pick up everyone, but we probably do want a lot...
+    #          Let's not bother with assistants."
+    #
+    # The brief's six-role keep-list was read as exhaustive; Simon says explicitly it is
+    # not ("it's not going to be an exhaustive list that we've got"). The operative
+    # boundary is seniority, not department: heads of department and named technical roles
+    # stay, their assistants go. Several entries below are director-level in their own
+    # right — DOP is the Director of Photography, Movement Director directs movement.
+    #
+    # When a new role is genuinely borderline, keep it. Farago will trim from a real page
+    # far more reliably than we can guess from a vocabulary file, and the agreed rollout
+    # is to ship and gather feedback rather than pre-clear every decision.
+    # SPLIT 2026-09-01 into crew_lead (shown) and crew (hidden). Simon's literal rule —
+    # "anyone but an assistant" — produced 46 people on a single McQueen sheet, against
+    # the 13-person page he had reviewed minutes earlier and called "really good". Both
+    # statements are his; they don't reconcile, so the split takes the middle: heads of
+    # department and director-level roles are shown, the technical bench is not.
+    wiki_keep: false
+    aliases:
+      - Sparks
+      - Spark
+      - Grip
+      - Best Boy
+      - Rigger
+      - Riggers
+      - Playback
+      - 1st AC
+      - Digi
+      - Digi Tech
+      - Runner
+      - Driver
+      - Security
+
+  crew_lead:
+    # Heads of department and director-level technical roles. Several are directors in
+    # everything but filing: DOP is the Director of Photography, the Gaffer heads the
+    # electrical department, the 1st AD runs the floor.
+    #
+    # NOT KEPT — reversed 2026-09-07 (Nick), having seen the tier on a real page rather
+    # than in the abstract. Job 526 rendered 8 of these (DOP, 1st AD, gaffer, lighting
+    # director, set designer, DIT and two studio managers) against the 13-person page
+    # Simon approved, and the technical bench is not what the wiki is for.
+    #
+    # This is the reversal that reconciles the contradiction recorded at the top of this
+    # file: "anyone but an assistant" yields 46 people on that sheet, Simon approved 13,
+    # and the middle reading yielded 28. Excluding this tier takes it to 19.
+    #
+    # ⚠ CONSEQUENCE, accepted deliberately: agents go with their principals, because
+    # `agent` is wiki_keep: represents. Dropping the set designer drops Gabriela
+    # Moussaieff @ Streeters, who carries the only phone number of that pair. Measured
+    # across the corpus, 45% of agent rows have a phone against 3% of principal rows, so
+    # each excluded principal with an agent loses a real contact route.
+    #
+    # Kept as its own tier rather than folded into `crew` so the distinction survives:
+    # these are recorded as crew_lead in the extract and can be shown again by flipping
+    # this one flag, with no re-extraction. Do not re-merge it into `crew`.
+    wiki_keep: false
+    aliases:
+      - DOP
+      - Director of Photography
+      - Gaffer
+      - 1st AD
+      - Lighting Director
+      - Set Designer
+      - Movement Director
+      - Studio Manager
+      - DIT
+      - Location Manager
+      - Art Buyer
+
+  assistant:
+    # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
+    # seniority marker makes it a deputy: assistants, trainees, juniors, numbered seconds.
+    # Caught almost entirely by shape rather than enumeration; see `patterns`.
+    wiki_keep: false
+    aliases:
+      - Assistant
+      - 2nd AD
+      - 2nd AC
+      - 3rd AD
+
+  other:
+    # The fallback bucket: any label that matches no alias and no pattern shape.
+    #
+    # NOT KEPT — reversed 2026-09-07 (Nick). Previously kept-and-flagged on the
+    # keep-when-in-doubt rule; see the warning at the top of this file, which explains
+    # why this exclusion carries more risk than the others.
+    #
+    # Defined here as a real entry rather than special-cased in wiki_filter.py, so the
+    # decision lives with every other keep/drop decision and one file answers "who
+    # reaches the wiki". It carries no aliases by design — nothing resolves TO `other`
+    # by name, only by falling through.
+    wiki_keep: false
+
+  stand_in:
+    # NOT KEPT — decided 2026-09-07 (Nick). Found as `STAND IN` on the job 526 prelight,
+    # where it previously resolved to `other` and so would have been shown.
+    #
+    # Deliberately NOT a `talent` alias. A stand-in is there to be lit and framed while
+    # the campaign's talent is elsewhere; they are functionally crew, and nobody reading
+    # a job back later needs them. Filing them under `talent` would also have inherited
+    # talent's placeholder-name caveat, implying the campaign's cast was uncertain when
+    # the uncertainty is about a different person entirely.
+    #
+    # Consequence, recorded deliberately: their agent goes too. `agent` is
+    # wiki_keep: represents, so an agent whose principal is dropped is dropped with them
+    # (job 526: Paulo Ribeiro @ PRM, for Inga Farida). That is the intended behaviour of
+    # the relational rule, not an oversight.
+    wiki_keep: false
+    aliases:
+      - Stand In
+      - Stand-In
+      - Standin
+
+  talent:
+    wiki_keep: true
+    # INCLUDED — decided 2026-09-01 (Nick), matching Simon's instruction of 2026-08-25:
+    #   "I think we should maybe pull it in, but it's not necessarily going to be
+    #    accurate... we might need a little NB or a star or something saying talent name
+    #    may not be accurate."
+    #
+    # A brief spell of wiki_keep: false was recorded here on 2026-08-31 as a privacy
+    # exclusion. That was mistaken — the 8-31 transcript contains no such decision, and
+    # the only recorded instruction is the one quoted above. Left documented so nobody
+    # reinstates the exclusion from memory.
+    #
+    # ⚠ NAMES ARE OFTEN DELIBERATELY WRONG, and this is the real issue — not privacy.
+    # Farago put placeholder or false names on callsheets for high-profile talent so that
+    # a campaign cannot leak before release ("if they have Kate Moss... you wouldn't see
+    # her name here"). So a talent name is a low-confidence field by nature.
+    #
+    # Requirement: every talent name on the wiki carries a visible caveat marker. Do not
+    # present talent names with the same confidence as crew names, and never use a talent
+    # name as a join key when rolling days up into a job view.
+    display_caveat: "Name as printed on the callsheet; may be a placeholder."
+    #
+    # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
+    # in practice the contact route is the agency, via the relational `agent` rule — which
+    # now also means talent agents ARE kept, since their principal is kept.
+    aliases: [Talent, Model, Artist Collaborator, Cast]
+
+# ---------------------------------------------------------------------------------
+# PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
+#
+# RESOLUTION ORDER, and it matters:
+#   1. exact alias match above   (wins — "Hair Stylist" is hair_lead, never crew)
+#   2. pattern match here        (catches the generative tail)
+#   3. `other`, reported at end of run
+#
+# Aliases must win, or "Hair Stylist" would be swallowed by the /stylist/ shape and
+# "Nail Artist" by /artist/. Never add a pattern broad enough to need an exception list;
+# if a shape needs carve-outs, it belongs in `aliases` instead.
+# ---------------------------------------------------------------------------------
+patterns:
+  - shape: '(?i)(?<![a-z])(assistants?|asst\.?s?)(?![a-z])'
+    canonical: assistant
+    note: >
+      Every department spawns assistants and the list never stabilises, so this is matched
+      by shape. It is also the single most important boundary in the corpus and now the
+      main one that excludes anybody — "Photo Assistant" scores high string-similarity
+      against "Photographer" but is the opposite decision, which is exactly why fuzzy
+      matching was rejected in favour of an explicit shape.
+
+  - shape: '(?i)^(junior|jr\.?|trainee|intern|graduate)(?![a-z])'
+    canonical: assistant
+    note: Junior/trainee grades — "Junior Fashion Editor", "Graduate Trainee - RTW".
+
+  - shape: '(?i)(?<![a-z])(2nd|3rd|second|third)\s+(ad|ac|assistant)(?![a-z])'
+    canonical: assistant
+    note: >
+      Numbered deputies. 1st AD/AC are kept as crew; seconds and thirds are not.
+
+  - shape: '(?i)(?<![a-z])agent(?![a-z])'
+    canonical: agent
+    note: >
+      Catches every construction — "Photographer Agent", "Agent (Stylist)",
+      "Agent (for Joe Bazalgette)", "Stylist's Agent". Record who they represent;
+      an agent with no named principal cannot be placed on the wiki and is dropped.
+
+# Rows that are organisations rather than people. These do not belong in the Contacts
+# table at all — they go under "Production services" in the extract.
+not_people:
+  - Hospital
+  - Medic
+  - Catering
+  - Lighting EQ
+  - EQ
+  - Art Handler

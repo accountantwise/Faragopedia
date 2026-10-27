@@ -39,6 +39,8 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 load_dotenv(HERE / ".env")
 import wikiapi as ia  # noqa: E402
+sys.path.append(str(HERE.parent / "callsheet_ingest"))
+from mdtable import split_raw  # noqa: E402  (one table splitter for every script, ADR 0009)
 
 TODAY = dt.date.today()
 ACTIVE_WINDOW = dt.timedelta(days=548)  # 18 months: leaves room for contact time between jobs
@@ -309,7 +311,7 @@ class Wiki:
                 entry = by_company.setdefault(client_slug, {}).setdefault(job, dict(base, as_client=True, people=[]))
                 entry["as_client"] = True
             for row in re.findall(r"^\|(.+)\|\s*$", body, re.M):
-                cells = [c.strip() for c in row.split("|")]
+                cells = [c.strip() for c in split_raw(row)]  # shared escape-aware parser (callsheet_ingest/mdtable.py)
                 if len(cells) < 3 or cells[0] in ("Role",) or cells[0].startswith("---"):
                     continue
                 for comp in re.findall(r"\[\[companies/([^\]|]+)", cells[2]):
@@ -676,11 +678,17 @@ def build(slug: str, content: str, wiki: Wiki, jobs: list[dict], outreach: list[
     for j in jobs:
         for role, who in j["people"]:
             if who.startswith("contacts/") and who not in seen_people:
-                on_sheets.setdefault(who, {"role": role, "jobs": []})["jobs"].append(j["job"])
+                d = on_sheets.setdefault(who, {"role": role, "jobs": []})
+                if j["job"] not in d["jobs"]:  # one person can have two rows on a job (two spellings)
+                    d["jobs"].append(j["job"])
     if on_sheets:
         contact_lines.append("")
         contact_lines.append("On Farago callsheets:")
-        for who, d in sorted(on_sheets.items(), key=lambda kv: -len(kv[1]["jobs"]))[:15]:
+        def latest_job(d):
+            return max((int(x) for x in d["jobs"] if str(x).isdigit()), default=0)
+        # most jobs first; ties go to the most recent job, so a big one-off roster (job 422's
+        # ~80 Y-3/adidas staff) doesn't push a company's regular contacts out of the top 15
+        for who, d in sorted(on_sheets.items(), key=lambda kv: (-len(kv[1]["jobs"]), -latest_job(kv[1])))[:15]:
             role = tidy_role(d["role"])
             contact_lines.append(f"- [[{who}]] — {role} (job{'s' if len(d['jobs']) > 1 else ''} {', '.join(d['jobs'])})")
         if len(on_sheets) > 15:
