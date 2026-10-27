@@ -1,0 +1,5 @@
+python-dotenv>=1.0
+pyyaml>=6.0
+openpyxl>=3.1      # staff_list.py (the staff list is an .xlsx)
+dropbox>=11.36     # build_job_links.py
+pytest>=8.0

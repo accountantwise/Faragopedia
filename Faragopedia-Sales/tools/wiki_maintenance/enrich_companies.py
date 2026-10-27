@@ -39,6 +39,8 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 load_dotenv(HERE / ".env")
 import wikiapi as ia  # noqa: E402
+sys.path.append(str(HERE.parent / "callsheet_ingest"))
+from mdtable import split_raw  # noqa: E402  (one table splitter for every script, ADR 0009)
 
 TODAY = dt.date.today()
 ACTIVE_WINDOW = dt.timedelta(days=548)  # 18 months: leaves room for contact time between jobs
@@ -309,7 +311,7 @@ class Wiki:
                 entry = by_company.setdefault(client_slug, {}).setdefault(job, dict(base, as_client=True, people=[]))
                 entry["as_client"] = True
             for row in re.findall(r"^\|(.+)\|\s*$", body, re.M):
-                cells = [c.strip() for c in re.split(r"(?<!\\)\|", row)]  # escaped \| stays inside its cell
+                cells = [c.strip() for c in split_raw(row)]  # shared escape-aware parser (callsheet_ingest/mdtable.py)
                 if len(cells) < 3 or cells[0] in ("Role",) or cells[0].startswith("---"):
                     continue
                 for comp in re.findall(r"\[\[companies/([^\]|]+)", cells[2]):
