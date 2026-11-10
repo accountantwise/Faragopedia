@@ -51,6 +51,7 @@ current direction.
 | Source-doc links   | Key + closed lookup table, `GET /api/job/{key}` -> 302 | [ADR 0006](docs/decisions/0006-source-document-link-resolver.md) |
 | Markdown rendering | react-markdown + **remark-gfm** — v9 core is CommonMark, so tables need it | - |
 | Wiki data maintenance | `tools/wiki_maintenance/` scripts (external API, dry-run default) + `/.claude/skills/faragopedia-*`; notes/link/status rules | [ADR 0008](docs/decisions/0008-wiki-maintenance-toolkit.md) |
+| Callsheet ingest   | `tools/callsheet_ingest/push_job.py` is the only push path; one strict table parser, reconciliation, quarantine, snapshot first; same rules in Lint (`agent/data_lint.py`) | [ADR 0009](docs/decisions/0009-callsheet-ingest-safeguards.md) |
 
 ---
 
