@@ -121,15 +121,17 @@ section is the "how to touch it" reference.
 
   | Hostname | Routes to | Gate |
   | --- | --- | --- |
-  | `portainer.ai-wise.uk` | Portainer UI | none (add one if this becomes long-lived) |
-  | `faragopedia-vps.ai-wise.uk` | frontend container | Cloudflare Access (email allowlist) |
-  | `faragopedia-backend-vps.ai-wise.uk` | backend container | none — this is what `VITE_API_BASE_URL` points at |
-  | `faragopedia-api-vps.ai-wise.uk` | backend container (same one) | `X-API-Key` via `FARAGOPEDIA_API_HOSTNAME` — external automation only |
+  | `portainer.ai-wise.uk` | Portainer UI and API | Cloudflare Access: Nick's email, or the `portainer-vps-automation` service token (ADR 0010) |
+  | `faragopedia-vps.ai-wise.uk` | frontend container (nginx; also proxies `/api/` to `backend:8300`) | Cloudflare Access (email allowlist); `/api/job/*` bypassed for the job-link resolver |
+  | `faragopedia-api-vps.ai-wise.uk` | backend container | `X-API-Key` via `FARAGOPEDIA_API_HOSTNAME` — external automation only |
+  | `wisecrawler-vps.ai-wise.uk` | Wisecrawler API (separate stack) | its own API key |
 
-  **Do not point `VITE_API_BASE_URL` at the `-api-` hostname** — that's the
-  automation-only gated route; the frontend's own page-load `fetch()` calls
-  have no way to attach `X-API-Key` and every request 401s. Use the
-  `-backend-` hostname for anything the browser calls directly.
+  The backend has **no browser-facing hostname**. `faragopedia-backend-vps`
+  was removed on 2026-11-11 (ADR 0010): it was ungated and served wiki data
+  to anyone. The stack's `VITE_API_BASE_URL` is `/api`, so the browser calls
+  `/api` on the frontend hostname and nginx proxies it inside the `edge`
+  network. **Do not point `VITE_API_BASE_URL` at the `-api-` hostname** (every
+  browser request would 401) and do not re-add a public backend hostname.
 
 ### Redeploying after a `main` merge
 
@@ -139,14 +141,30 @@ git merge origin/main
 git push origin vps-prod-deploy
 ```
 
-Then trigger a rebuild via Portainer's API (no UI webhook is configured):
+Then trigger a rebuild via Portainer's API (no UI webhook is configured).
+Portainer sits behind Cloudflare Access, so every API call needs the service
+token headers as well as the Portainer key:
 
 ```bash
 curl -X PUT "https://portainer.ai-wise.uk/api/stacks/1/git/redeploy?endpointId=3" \
   -H "X-API-Key: $PORTAINER_API_TOKEN" \
+  -H "CF-Access-Client-Id: $PORTAINER_VPS_CF_ACCESS_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: $PORTAINER_VPS_CF_ACCESS_CLIENT_SECRET" \
   -H "Content-Type: application/json" \
-  -d '{"repositoryReferenceName":"refs/heads/vps-prod-deploy","repositoryAuthentication":false,"pullImage":false}'
+  -d '{"repositoryReferenceName":"refs/heads/vps-prod-deploy","repositoryAuthentication":false,"pullImage":true}'
 ```
+
+- **Use `"pullImage": true`.** With `false`, Portainer rebuilds the image but
+  can leave the old container running (seen 2026-11-11: new frontend image
+  built, container not recreated). `true` forces the recreate.
+- **To change an env var**, add `"env": [...]` with **all 15** stack variables
+  (read them first with `GET /api/stacks/1`). An empty or partial `env` list
+  replaces the stack's variables wholesale (2026-09-10 incident). Omitting
+  `env` keeps them as they are.
+- The service token (`portainer-vps-automation`) expires **2027-11-10**; renew
+  it in Cloudflare Zero Trust before then. Credentials live with the other
+  VPS secrets, not in this repo. If the `.env` you load them from has CRLF
+  line endings, strip `\r` or the headers are rejected.
 
 Confirm the rebuild actually happened — `docker ps` on the VPS should show
 both `faragopedia-vps-*` containers with a fresh `CREATED` time, and the
