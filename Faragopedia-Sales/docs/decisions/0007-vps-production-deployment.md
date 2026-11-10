@@ -1,6 +1,6 @@
 # ADR-0007: VPS production deployment, separate from the NUC
 
-> **Status:** Accepted
+> **Status:** Accepted — backend hostnames and Access amended by [ADR 0010](0010-vps-same-origin-api-and-portainer-access.md)
 > **Date:** 2026-09-09
 > **Decided by:** Nick + Claude
 
