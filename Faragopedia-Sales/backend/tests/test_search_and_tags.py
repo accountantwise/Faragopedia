@@ -268,7 +268,7 @@ async def test_suggest_tags_returns_list(wiki_env):
     from unittest.mock import AsyncMock, MagicMock
     mock_response = MagicMock()
     mock_response.content = '["wedding", "commercial", "VIP"]'
-    manager.llm.ainvoke = AsyncMock(return_value=mock_response)
+    manager.ingest_llm.ainvoke = AsyncMock(return_value=mock_response)
 
     tags = await manager._suggest_tags("Some page content about weddings.", "clients")
     assert isinstance(tags, list)
@@ -280,7 +280,7 @@ async def test_suggest_tags_returns_list(wiki_env):
 async def test_suggest_tags_returns_empty_on_error(wiki_env):
     manager = make_manager(wiki_env)
     from unittest.mock import AsyncMock
-    manager.llm.ainvoke = AsyncMock(side_effect=Exception("LLM error"))
+    manager.ingest_llm.ainvoke = AsyncMock(side_effect=Exception("LLM error"))
 
     tags = await manager._suggest_tags("content", "clients")
     assert tags == []
@@ -296,7 +296,7 @@ async def test_save_page_content_returns_new_suggestions(wiki_env):
     from unittest.mock import AsyncMock, MagicMock
     mock_response = MagicMock()
     mock_response.content = '["wedding", "VIP"]'
-    manager.llm.ainvoke = AsyncMock(return_value=mock_response)
+    manager.ingest_llm.ainvoke = AsyncMock(return_value=mock_response)
 
     suggestions = await manager.save_page_content(
         "clients/acme.md",
@@ -316,7 +316,7 @@ async def test_save_page_content_excludes_existing_tags_from_suggestions(wiki_en
     from unittest.mock import AsyncMock, MagicMock
     mock_response = MagicMock()
     mock_response.content = '["wedding", "VIP"]'  # "wedding" already on page
-    manager.llm.ainvoke = AsyncMock(return_value=mock_response)
+    manager.ingest_llm.ainvoke = AsyncMock(return_value=mock_response)
 
     suggestions = await manager.save_page_content(
         "clients/acme.md",
@@ -413,7 +413,7 @@ def test_put_page_returns_suggested_tags(client, wiki_env):
     import api.routes as r
     mock_resp = MagicMock()
     mock_resp.content = '["wedding"]'
-    r._wiki_manager.llm.ainvoke = AsyncMock(return_value=mock_resp)
+    r._wiki_manager.ingest_llm.ainvoke = AsyncMock(return_value=mock_resp)
 
     resp = client.put("/pages/clients/test.md",
                       json={"content": "---\nname: Test\ntags: []\n---\n\n# Test\n\nNew."})
