@@ -1,0 +1,5 @@
+# Content-free commits that git blame should skip (GitHub honours this file).
+# Use locally with: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Line-ending normalisation to LF (2026-11-11)
+bb500d6ef315378de01b227971ef40a8c3dbf46b
