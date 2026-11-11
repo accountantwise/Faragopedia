@@ -41,6 +41,7 @@ sys.path.append(str(HERE.parent / "wiki_maintenance"))  # after HERE: this folde
 import enrich_companies as ec  # noqa: E402  (company-page schema helpers only)
 import quarantine as q  # noqa: E402
 from job_page import build_roster, render_job_page  # noqa: E402
+from minors import withhold_minors  # noqa: E402
 from postprocess import page_path, people_links, wikilink_companies, wikilink_people  # noqa: E402
 from push_to_faragopedia import collect  # noqa: E402
 from wiki import all_pages, get_page, require_snapshot, slugify, write_page  # noqa: E402
@@ -108,6 +109,13 @@ def plan_job(job: str, aliases: dict, replace: bool) -> dict:
         raise SystemExit(f"job {job} already has {existing} — refusing to overwrite (hand fixes would be "
                          f"lost). Merge changes row by row, or pass --replace after checking the page.")
 
+    # Children and their parents never reach the wiki (ADR 0011): drop their rows before
+    # anything is rendered or created, and keep only an anonymous count for the page.
+    withheld = withhold_minors(days)
+    for d in days:
+        for p in d.people:
+            p.company = q.care_of_company(p.company)
+
     roster = build_roster(days)
     vocab = RoleVocabulary.load()
     roles = q.role_words(vocab)
@@ -152,7 +160,8 @@ def plan_job(job: str, aliases: dict, replace: bool) -> dict:
         new_contacts[slug] = render_contact(p.name, cslug, cname, job_title(p.role_raw, p.company or ""),
                                             p.canonical, p.employment, p.phone, p.email, job)
 
-    page = render_job_page(job, days, days[0].sheet.frontmatter.get("job_folder"))
+    page = render_job_page(job, days, days[0].sheet.frontmatter.get("job_folder"),
+                           withheld.note() if withheld else None)
     linkable = contacts | set(new_contacts)
     page = wikilink_people(page, lambda n: f"contacts/{slugify(n)}.md" if slugify(n) in linkable else None,
                            people_alias)
@@ -165,6 +174,7 @@ def plan_job(job: str, aliases: dict, replace: bool) -> dict:
             "new_companies": {f"companies/{s}.md": render_company(n) for s, n in new_companies.items()},
             "new_contacts": {f"contacts/{s}.md": c for s, c in new_contacts.items()},
             "quarantine": held, "report": report.render(),
+            "minors_withheld": len(withheld.children) + len(withheld.parents),
             "reconciled": report.reconciled}
 
 
@@ -213,7 +223,8 @@ def main() -> int:
     d = write_dry_run(plan)
     print(f"job {a.job} -> {plan['callsheet']}{' (REPLACING ' + str(plan['replacing']) + ')' if plan['replacing'] else ''}")
     print(f"  new companies: {len(plan['new_companies'])}   new contacts: {len(plan['new_contacts'])}   "
-          f"quarantined: {len(plan['quarantine'])}   callsheets reconciled: {len(plan['reconciled'])}")
+          f"quarantined: {len(plan['quarantine'])}   callsheets reconciled: {len(plan['reconciled'])}   "
+          f"minors withheld: {plan['minors_withheld']}")
     print(f"  review: {d}")
     if not a.live:
         print("DRY RUN — nothing written.")
