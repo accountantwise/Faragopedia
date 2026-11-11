@@ -41,11 +41,19 @@ for Farago.
 
 ## Clean-up done on 2026-11-11
 
-Live wiki on the VPS, via the API: 64 child and parent contact pages and the 5 `c/o` company pages
-permanently deleted (archive emptied of them too). Four first-name pages that had merged a child
-with an adult of the same name (`gaia`, `isaac`, `pippa`, `george`) were kept with the kids-job
-entries and the child's phone removed. Eight job pages had their child rows replaced by the
-anonymous line. The page names were also removed from `wiki/log.md` and `.page-metadata.json`.
+Live wiki on the VPS, via the API: 64 child and parent contact pages (plus 3 below) and the 5 `c/o` company pages
+permanently deleted (archive emptied of them too). Eight job pages had their child rows replaced
+by the anonymous line.
+
+Four first-name pages had merged a child with a later adult-job booking of the same name, only
+because both got the same slug. `george` belongs to a real adult contact (Concrete, from the
+meeting log): kept, with the child's entries removed. `pippa`, `isaac` and `gaia` were deleted
+too. Each was a child at a kids agency with a chaperone, then 10–15 months later a model at an
+adult agency. They were probably different people, but nothing on a callsheet proves the later
+one was 18 or over, and a 16-year-old can move to an adult board. The pages held only a first
+name, so their adult-job rows keep the name as plain text with no link. Identity was not
+researched: that would mean trying to identify a possible child, which this ADR exists to avoid.
+Farago's booking records are the only reliable source if it ever matters. The page names were also removed from `wiki/log.md` and `.page-metadata.json`.
 `sources/`, `archive/` and both existing snapshots held no child data. Before any change, an
 encrypted full backup of the workspace was taken outside this repo and the VPS (Nick holds it).
 Replaying `minors.py` over every extract withholds exactly the same 75 rows on the same 8 jobs.
@@ -56,6 +64,12 @@ Replaying `minors.py` over every extract withholds exactly the same 75 rows on t
   anyone at Farago who needs it.
 - Detection is heuristic. A child booked through an agency with an adult-sounding name on a
   non-kids job would get through; add the agency to `KIDS_AGENCIES`. Lint is the backstop.
+- **Known limit:** callsheets carry no ages. A 16- or 17-year-old booked through an adult agency
+  on an adult job (London Fashion Week allows models from 16) looks exactly like an adult, so
+  "under 18" can only be enforced as far as the callsheet shows it.
+- First-name-only talent pages are shared by slug, so different people with the same first name
+  land on one page. That broke the "never link records by talent name" rule here and is how a
+  child's history ended up on an adult's page. Worth revisiting for all talent (open).
 - The callsheet extracts (`CALLSHEET_EXTRACTS_DIR`) still contain the children's rows, as the
   source callsheets in Farago's job folders do. They stay outside this repo.
 - Open: whether Farago want the extracts' child rows redacted too, and whether Simon wants to
