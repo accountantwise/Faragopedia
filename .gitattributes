@@ -1,2 +1,19 @@
-# Ensure shell scripts always use LF line endings for Docker compatibility
+# Normalise all text files to LF in the repo, whichever OS commits them.
+# Windows checkouts can still use CRLF locally via core.autocrlf=true.
+* text=auto eol=lf
+
+# Shell scripts must stay LF for Docker
 *.sh text eol=lf
+
+# Binary assets: never touch
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.docx binary
+*.xlsx binary
