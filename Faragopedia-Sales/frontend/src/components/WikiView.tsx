@@ -13,8 +13,7 @@ import { formatPageName } from '../utils/formatPageName';
 import ErrorToast from './ErrorToast';
 import ConfirmDialog from './ConfirmDialog';
 import MoveDialog from './MoveDialog';
-import octopusLight from '../assets/octopus-light.png';
-import octopusDark from '../assets/octopus-dark.png';
+import octopusMascot from '../assets/octopus-mascot.webp';
 
 type PageTree = Record<string, string[]>;
 
@@ -1695,14 +1694,9 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, init
           ) : (
             <div className="flex flex-col items-center h-full text-center px-6 overflow-y-auto py-10">
               <img
-                src={octopusLight}
+                src={octopusMascot}
                 alt="Faragopedia"
-                className="w-20 h-20 sm:w-28 sm:h-28 mb-6 mt-auto dark:hidden opacity-90 shrink-0"
-              />
-              <img
-                src={octopusDark}
-                alt="Faragopedia"
-                className="w-20 h-20 sm:w-28 sm:h-28 mb-6 hidden dark:block opacity-90 shrink-0"
+                className="w-48 h-48 sm:w-64 sm:h-64 mb-6 mt-auto shrink-0 drop-shadow-md dark:drop-shadow-none"
               />
 
               {totalPageCount === 0 ? (
