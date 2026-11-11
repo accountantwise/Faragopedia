@@ -98,4 +98,21 @@ def company_problems(name: str, *, person_keys: set[str], row_person: str, roles
         problems.append("is a role or section label, not a company")
     if is_farago(raw):
         problems.append("a Farago office: map it to the existing farago-projects* page with --aliases")
+    if CARE_OF.match(raw):
+        problems.append("a 'c/o' contact route, not a company (it can name a parent): map it with --aliases")
     return problems
+
+
+CARE_OF = re.compile(r"^\s*c/o\b", re.I)
+
+
+def care_of_company(raw: str) -> str:
+    """'c/o Tomo, agent Eleanor @ Maya Inc Kids' -> 'Maya Inc Kids'. Callsheets put a
+    contact route in the company column; when it ends in '@ <agency>' the agency is the
+    company and the rest (often a parent's name) is dropped. Anything else is returned
+    unchanged, so a bare 'c/o …' still reaches company_problems() and is held."""
+    if raw and CARE_OF.match(raw) and "@" in raw:
+        agency = raw.rsplit("@", 1)[1].strip()
+        if agency:
+            return agency
+    return raw

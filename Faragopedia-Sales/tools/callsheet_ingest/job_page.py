@@ -173,7 +173,10 @@ def _fmt_contact(p: Person) -> str:
     return _cell(" · ".join(bits)) if bits else "—"
 
 
-def render_job_page(job: str, days: list[Day], dropbox_job_folder: str | None) -> str:
+def render_job_page(job: str, days: list[Day], dropbox_job_folder: str | None,
+                    minors_note: str | None = None) -> str:
+    """minors_note: the anonymous line minors.withhold_minors() returns, placed under the
+    People table. The children's rows must already be gone from `days`."""
     days = sorted(days, key=lambda d: (d.campaign, d.sheet.shoot_date, _type_rank(d.shoot_type)))
     campaigns = _fm(days, "campaign")
     clients = _fm(days, "client")
@@ -273,6 +276,8 @@ def render_job_page(job: str, days: list[Day], dropbox_job_folder: str | None) -
             row += f" {', '.join(d[5:] for d in dates_on)} |"
         lines.append(row)
     lines.append("")
+    if minors_note:
+        lines += [minors_note, ""]
     if any(p.caveat for p, _ in roster):
         lines += [
             "> ⚠ Name as printed on the callsheet. Talent names may be placeholders — "

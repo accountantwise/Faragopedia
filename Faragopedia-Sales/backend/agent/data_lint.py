@@ -24,6 +24,11 @@ LINK = re.compile(r"\[\[(contacts|companies)/([^\]|#]+)")
 ROLE_WORDS = {"sales", "producer", "comms", "photographer", "production", "client", "pr", "spoma",
               "culturemarketing", "socialsanddigital", "management", "label", "band", "talent", "crew",
               "artdirector", "stylist", "director", "casting", "agent"}
+# Children are not recorded (ADR 0011). Mirrors tools/callsheet_ingest/minors.py.
+KIDS_AGENCY = re.compile(r"\b(kids|kidz|children|junior)\b|maya inc|bruce (and|&) brown|grace (and|&) galor|"
+                         r"\bbizzy\b|arwen and co|mini title", re.I)
+CARE_OF = re.compile(r"^\s*c/o\b", re.I)
+CARE_OF_AGENT = re.compile(r"\bc/o\b[^\n]*@", re.I)  # 'c/o <parent>, agent <name> @ <agency>'
 
 
 def _norm(s: str) -> str:
@@ -99,6 +104,19 @@ def run_rules(wiki_dir: str) -> list[dict]:
         if rel and staff:
             add("error", page, f"Farago staff/freelancer '{name}' has pipeline relationship '{rel}'.",
                 "clear the relationship field (it is a sales stage; staff have none).")
+
+        title = str(fm.get("job_title", "") or "")
+        if re.search(r"\b(models?|talent|young|child|kid|baby|boy|girl|teen|friend)\b", title, re.I) and \
+                (KIDS_AGENCY.search(text) or CARE_OF_AGENT.search(text)):
+            add("error", page, f"contact '{name}' looks like a child model (kids agency or 'c/o' parent route).",
+                "minors are not recorded (ADR 0011): delete the page permanently and replace the row on "
+                "the job page with an anonymous count.")
+
+    for slug, fm in company_fm.items():
+        if CARE_OF.match(str(fm.get("name", "") or "")) or slug.startswith("c-o-"):
+            add("error", f"companies/{slug}.md",
+                f"company '{fm.get('name', slug)}' is a 'c/o' contact route, not a company — it can name a parent.",
+                "delete it permanently, repoint links to the agency it names, and check for a child's contact page.")
 
     for slug in companies:
         # multi-word only: a one-word talent name ('Chloe') can share a brand's slug (Chloé)
