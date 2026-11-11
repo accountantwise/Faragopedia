@@ -37,6 +37,11 @@ Review `out/job-510/`:
 - `report.txt` — the filter report and the per-callsheet reconciliation.
 - `callsheets/`, `contacts/`, `companies/` — every page that would be written.
 
+Children and their parents are never written (ADR 0011, `minors.py`): their rows are dropped
+before rendering and the job page gets one anonymous "N child models (via agencies)" line. The
+run prints `minors withheld: N`. If a child gets through, add their agency to `KIDS_AGENCIES`.
+Never put a real child's details in a test: this repo is public.
+
 Resolve spelling variants and company names with an aliases file (human-approved, never guessed):
 
 ```json

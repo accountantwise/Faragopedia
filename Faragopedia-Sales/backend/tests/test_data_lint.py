@@ -109,3 +109,20 @@ async def test_data_rule_findings_never_reach_the_llm_fixer(tmp_path, wiki):
     fixer.assert_not_called()
     assert report.files_changed == [] and "manual fix" in report.summary
     assert report.skipped == [f"{data_lint.PREFIX} junk — By hand: archive it"]
+
+
+def test_care_of_company_and_child_model_contact_are_flagged(tmp_path):
+    # ADR 0011. Invented names only: this repo is public.
+    w = tmp_path / "wiki"
+    _page(w, "companies/c-o-parentname-agent-x-example-kids.md",
+          '---\nname: "c/o Parentname, agent X @ Example Kids"\n---\n')
+    _page(w, "contacts/testchild.md",
+          '---\nname: "Testchild"\njob_title: "MODEL"\n'
+          'company: "[[companies/c-o-parentname-agent-x-example-kids]]"\n---\n\n'
+          "## Overview\n\nMODEL at c/o Parentname, agent X @ Example Kids\n")
+    _page(w, "contacts/adult-model.md",
+          '---\nname: "Adult Model"\njob_title: "MODEL"\n---\n\n## Overview\n\nModel at Example Models\n')
+    descs = _descs(w)
+    assert any("'c/o' contact route" in d and "c/o Parentname" in d for d in descs)
+    assert any("'Testchild' looks like a child model" in d for d in descs)
+    assert not any("Adult Model" in d for d in descs)
