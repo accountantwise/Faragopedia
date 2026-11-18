@@ -46,6 +46,8 @@ These variables are critical for ensuring files created by the AI are accessible
 | `VITE_ALLOWED_HOST` | Allowed hostname for the frontend. | `localhost` |
 | `WISECRAWLER_BASE_URL`| (Optional) URL for a WiseCrawler instance for web scraping. | - |
 | `WISECRAWLER_API_KEY` | (Optional) API key for WiseCrawler. | - |
+| `CORS_ALLOWED_ORIGINS` | Comma list of origins allowed to call the backend from a browser. Unset = `*` (local dev, frontend on another port). Empty = none (production, which is same-origin). Credentials are never allowed. ADR 0012. | unset; `""` in `docker-compose.prod.yml` |
+| `ENABLE_API_DOCS` | `true` serves `/docs`, `/redoc` and `/openapi.json`. Leave off anywhere reachable from the internet. | off |
 
 ---
 
@@ -169,6 +171,20 @@ curl -X PUT "https://portainer.ai-wise.uk/api/stacks/1/git/redeploy?endpointId=3
 Confirm the rebuild actually happened — `docker ps` on the VPS should show
 both `faragopedia-vps-*` containers with a fresh `CREATED` time, and the
 response's `GitConfig.ConfigHash` should match the branch's latest commit.
+
+### Health, headers and backups (ADR 0012)
+
+- **Liveness:** `GET /api/health` → `{"status":"ok"}`, open on the external API
+  hostname (`https://faragopedia-api-vps.ai-wise.uk/api/health`) so an uptime
+  monitor needs no key. The backend container has a Docker healthcheck on it.
+- **Security headers:** `frontend/security-headers.conf`. The CSP is
+  **Report-Only** for now. After a deploy, open the live site with the browser
+  console open and click around; if no CSP reports appear, rename the header
+  to `Content-Security-Policy`. If the inline theme script in `index.html`
+  changes, recompute its hash from `dist/index.html` after `npm run build`
+  (sha256 of the script body, base64) and update the header.
+- **Backups:** nightly restic to off-site storage. Install and restore steps:
+  [`backup.md`](backup.md).
 
 ### Data
 

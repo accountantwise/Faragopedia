@@ -1,0 +1,11 @@
+[Unit]
+Description=Faragopedia off-site backup (restic)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/faragopedia-backup.env
+ExecStart=/usr/local/bin/faragopedia-backup.sh
+Nice=10
+IOSchedulingClass=idle

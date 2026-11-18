@@ -1,0 +1,27 @@
+# Weekly upgrade PRs. requirements.txt is pinned (2026-11-18), so nothing moves
+# without a PR that CI has tested. Security advisories open PRs immediately.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /Faragopedia-Sales/backend
+    schedule:
+      interval: weekly
+    groups:
+      langchain:
+        patterns: ["langchain*"]
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /Faragopedia-Sales/frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: docker
+    directories:
+      - /Faragopedia-Sales/backend
+      - /Faragopedia-Sales/frontend
+    schedule:
+      interval: monthly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
