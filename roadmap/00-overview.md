@@ -6,6 +6,13 @@
 >
 > Each point has a standalone implementation doc in this folder, written to be handed to a Sonnet-based build session. They follow the project's existing conventions (TDD, ADRs in `docs/decisions/` — 0001–0005 exist, next is 0006 — feature branches, status updates in `docs/status.md`).
 
+> **Progress 2026-11-18:** most of **01** and **02** shipped in PR #24
+> ([ADR 0012](../Faragopedia-Sales/docs/decisions/0012-tier1-hardening.md)): same-origin nginx proxy (ADR 0010, earlier),
+> CORS, security headers, C4/C5/H2 and M1's size cap, healthcheck, pinned deps, backups. **Still open from 01/02:**
+> rate limits on LLM-spending endpoints (01-C / H3), backend upload caps (01-E), zip member-count cap (M1),
+> error-detail leakage (L13), prompt injection (L14), secrets rotation (H1). For 03, consider reading the
+> Cloudflare Access identity (already in front of the app) before building local accounts.
+
 ## Where Faragopedia is today
 
 A capable single-user, file-based, LLM-powered wiki: entity-folder markdown pages with `[[wikilinks]]`, AI ingestion of source docs, AI chat, AI "lint", keyword search + tags, a Link View graph, workspaces, snapshots, import/export, a setup wizard, and a settings drawer (theme/reconfigure/export). Strong foundations.

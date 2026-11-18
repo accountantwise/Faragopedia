@@ -15,7 +15,7 @@
 | **Repo**     | `github.com/accountantwise/Faragopedia-Sales`            |
 | **Phase**    | 🟡 MVP Development / Settings Section + Entity Templates planned, ready to implement |
 | **Stack**    | Python/FastAPI + React/Vite                              |
-| **Deploy**   | Two Portainer stacks — NUC (dev/test, `main`) and OVHcloud VPS (production, `vps-prod-deploy`). See [Deployment](#deployment) below and [ADR 0007](docs/decisions/0007-vps-production-deployment.md). |
+| **Deploy**   | One Portainer stack: OVHcloud VPS (production, `vps-prod-deploy`). The office NUC (dev/test) was retired in Nov 2026; a dev stack on gecko is planned. See [Deployment](#deployment) below and [ADR 0007](docs/decisions/0007-vps-production-deployment.md). |
 
 ## Project Vision
 
@@ -119,6 +119,8 @@ current direction.
 27. ~~Implement Graph View~~ ✅ (2026-07-04, merged to `main` + `vps-prod-deploy` and redeployed to production 2026-09-10) — shipped as **Link View** on branch `link-view`: grouped-grid wikilink map (not force-directed), hover/focus connection curves, docked reading panel, content search. Backend `GET /pages/graph` builds the whole graph in one pass (ADR 0005). Verified with 35/35 browser checks in light + dark. Deploy also added CI (none existed before) and fixed 4 flaky backend tests — full detail in `docs/status.md` 2026-09-10 entries.
 28. ~~Execute Web Search Sources plan (Faragopedia side)~~ ✅ (2026-05-19) — merged to `main`; 9 new tests passing; Phase 2 smoke test passed end-to-end. Wisecrawler-side `POST /v1/search` deployed with `BRAVE_API_KEY`. Known limitation: JS-rendered/auth-gated URLs (LinkedIn, paywalled sites) fail at Wisecrawler's analyze step — pre-existing crawler behaviour, not a web-search bug.
 29. ~~Author + critically review a 10-point growth roadmap~~ ✅ (2026-07-08) — production hardening, security remediation, auth, permissions/sharing, admin dashboard, routing/frontend refactor, version history, collaboration, semantic search/RAG, UX polish. Docs live in `roadmap/` at the repo root (sibling to this folder, not inside it); verdicts and evidence in `roadmap/00-review-log.md`. All 10 approved for build; sequencing in `roadmap/00-overview.md` — **01 (production hardening) and 02 (security remediation) are next**, since prod currently runs the dev server with no auth. Hand each doc to a build session one at a time.
+30. ~~Tier 1 hardening + Simon's quick wins~~ ✅ (2026-11-18, PR #24, [ADR 0012](docs/decisions/0012-tier1-hardening.md), deployed) — delivers most of roadmap 01/02: import traversal, staged snapshot restore, snapshot-id and zip checks, CORS without credentials, API docs off, `/api/health` + healthcheck, nginx security headers (CSP Report-Only), pinned deps + Dependabot (grouped minor/patch, #39), nightly backups to gecko + yeti, Uptime Kuma. UI: Home button, homepage disclaimer (draft wording), "Information correct as of". nginx 1.31 (#30) deployed the same day.
+31. **Next:** enforce the CSP once the live console shows no reports; Simon's disclaimer wording; gecko dev stack (planned separately); the rest of roadmap 01/02 — rate limits on the LLM-spending endpoints (01-C / 02-H3), backend upload caps (01-E), zip member-count cap (02-M1), error-detail leakage (02-L13), prompt injection (02-L14), secrets rotation (02-H1, see AI-Wise `SECRETS-ROTATION-PLAN.md`). Then roadmap 03+ (identity: read the Cloudflare Access user rather than building local auth).
 
 
 
@@ -132,12 +134,14 @@ rationale. Full operational detail (hostnames, redeploy commands, data
 layout) lives in [`docs/deployment.md`](docs/deployment.md#vps-production-stack) —
 this section is only the summary an agent needs to orient.
 
-### NUC — dev/test
+### Dev/test — none right now (NUC retired, Nov 2026)
 
-- **Host:** office NUC (Ubuntu)
-- **Branch:** `main`
-- **Frontend:** `frontend/Dockerfile` — Vite dev server (`npm run dev -- --host`)
-- **Workflow:** edit locally → push to GitHub → deploy/verify here first
+- The office NUC that ran `main` with the Vite dev server is **retired**. Its
+  Portainer (`portainer.accountantwise.uk`) and hostnames are dead.
+- **Planned:** a dev stack on gecko (home server, tailnet only) built from
+  `docker-compose.prod.yml`, so dev matches prod. Not built yet.
+- **Until then, verify locally** before promoting: see
+  [`docs/deployment.md` → Testing without a dev stack](docs/deployment.md#testing-without-a-dev-stack).
 
 ### VPS — production
 
@@ -147,19 +151,25 @@ this section is only the summary an agent needs to orient.
   redeploy after any merge to `main`, or the VPS serves stale code.
 - **Frontend:** `frontend/Dockerfile.prod` — production `vite build`, served
   by nginx. Never edit `frontend/Dockerfile` when the intent is a
-  production-facing change — that file is the NUC's dev server.
-- **Networking:** Cloudflare Tunnel, zero open inbound ports beyond SSH. Two
-  backend hostnames — one for the frontend's own calls, one gated by
-  `X-API-Key` for external automation. Getting this backwards breaks the
-  wiki UI itself (every page load 401s) — see ADR 0007 before changing either.
-- **Promoted here only after verification on the NUC.**
+  production-facing change — that file was the (retired) NUC's dev server.
+- **Networking:** Cloudflare Tunnel, zero open inbound ports beyond SSH. The
+  browser reaches the API same-origin through the frontend nginx `/api/` proxy
+  (ADR 0010; the old ungated backend hostname is gone). One backend hostname,
+  `faragopedia-api-vps`, is for external automation and gated by `X-API-Key`
+  (`/api/health` is open on it for monitoring). See ADR 0007 and 0010 before
+  changing either path.
+- **Promoted here only after local verification** (CI green, plus the checks in
+  `docs/deployment.md` → Testing without a dev stack).
 
-### Orchestration (both)
+### Orchestration
 
 - Portainer, deploying from a GitHub repository stack (no `docker-compose up`
-  by hand on either host).
-- `docker-compose.yml` (NUC) / `docker-compose.prod.yml` (VPS) — service
-  definitions for the respective Portainer stack.
+  by hand). Redeploys are asynchronous: stack status 3 while building, 1 when
+  done (about 2 minutes); check the containers were recreated.
+- `docker-compose.prod.yml` (VPS) is the live definition. `docker-compose.yml`
+  was the NUC's and is unused for now.
+- **Backups and monitoring:** nightly pull to gecko (restic, mirrored to yeti),
+  Uptime Kuma on yeti. See `docs/backup.md` and `docs/deployment.md`.
 
 ---
 
@@ -195,3 +205,6 @@ AGENTS.md          ← You are here. The single source of truth.
    starting `HUMAN:` (a flag for a person to check something). Wikilinks must be
    real paths (`[[contacts/slug]]`, `[[companies/slug]]`), never raw names; never
    merge duplicate pages without a human's confirmation. See ADR 0008.
+8. **The local checkout may be in use by another session.** Before committing,
+   check `git branch --show-current`; stage explicit paths (never `commit -a`);
+   for longer work use your own `git worktree`.

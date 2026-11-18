@@ -1,5 +1,10 @@
 # ADR-0007: VPS production deployment, separate from the NUC
 
+> **Update 2026-11-18:** the office NUC has been retired, so the dev/test
+> half of this decision no longer exists. Production is unchanged. A dev stack
+> on gecko is planned; until then, see `docs/deployment.md` → Testing without a
+> dev stack.
+
 > **Status:** Accepted — backend hostnames and Access amended by [ADR 0010](0010-vps-same-origin-api-and-portainer-access.md)
 > **Date:** 2026-09-09
 > **Decided by:** Nick + Claude

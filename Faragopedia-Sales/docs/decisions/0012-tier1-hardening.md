@@ -56,7 +56,9 @@ production and security fixes. By 2026-11-18 only the same-origin `/api` proxy
   console shows no reports.
 - **Dependencies:** `requirements.txt` pinned to the versions tested on
   Python 3.11 and 3.12. Dependabot (pip, npm, docker, actions) proposes
-  upgrades. Node 22 in CI and in `Dockerfile.prod`.
+  upgrades: grouped minor/patch weekly, majors ignored as planned work, Python
+  base image held at 3.11 (tuned the same day, PR #39). Node 22 in CI and in
+  `Dockerfile.prod`.
 - **Backups (no paid service):** gecko (home server) pulls the data nightly
   over SSH with a key the VPS locks to `rrsync -ro <data dir>`. gecko stores
   it in an encrypted restic repository (14 daily, 8 weekly, 12 monthly;

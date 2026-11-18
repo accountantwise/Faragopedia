@@ -2,10 +2,11 @@
 
 This guide covers how to deploy Faragopedia-Sales using Docker, Docker Compose, and Portainer Stacks.
 
-> **Two live deployments exist.** The office NUC (dev/test — deploys from
-> `main`, dev-server frontend) and an OVHcloud VPS (production — deploys from
+> **One live deployment:** an OVHcloud VPS (production — deploys from
 > `vps-prod-deploy`, production nginx build, Cloudflare Tunnel, no open
-> ports). See [ADR 0007](decisions/0007-vps-production-deployment.md) for why
+> ports). The office NUC (dev/test, `main`, dev-server frontend) was **retired
+> in Nov 2026**; a dev stack on gecko is planned. Until then, see
+> [Testing without a dev stack](#testing-without-a-dev-stack). See [ADR 0007](decisions/0007-vps-production-deployment.md) for why
 > they differ and the [VPS production stack](#vps-production-stack) section
 > below for its specifics. **`vps-prod-deploy` does not track `main`
 > automatically** — after merging anything to `main`, merge `main` into
@@ -178,9 +179,8 @@ response's `GitConfig.ConfigHash` should match the branch's latest commit.
   hostname (`https://faragopedia-api-vps.ai-wise.uk/api/health`) so an uptime
   monitor needs no key. The backend container has a Docker healthcheck on it.
 - **Uptime monitoring:** Uptime Kuma on yeti (home), two monitors since
-  2026-11-18. "Faragopedia API (VPS)" is an HTTP keyword check every 5 min.
-  Until ADR 0012 is deployed it checks `/` for `Hello World`; **after the
-  deploy, switch it to `/api/health` with keyword `ok`.** "Faragopedia backup
+  2026-11-18. "Faragopedia API (VPS)" is an HTTP keyword check every 5 min on
+  `https://faragopedia-api-vps.ai-wise.uk/api/health` for `ok`. "Faragopedia backup
   (gecko)" is a push monitor (see [`backup.md`](backup.md)). The frontend is
   not monitored directly: behind Cloudflare Access, a check only ever sees the
   login redirect.
@@ -194,6 +194,30 @@ response's `GitConfig.ConfigHash` should match the branch's latest commit.
   `gecko-root-faragopedia-backup` in `~ubuntu/.ssh/authorized_keys`, locked
   to `rrsync -ro`), keeps an encrypted restic repo and mirrors it to yeti.
   Don't remove that key. Install and restore: [`backup.md`](backup.md).
+
+### Testing without a dev stack
+
+Used for PR #24 and #30 (2026-11-18) while there is no dev environment:
+
+- **Backend with real models:** export the branch (`git archive <branch>
+  Faragopedia-Sales/backend | tar -x`), run it on **Python 3.11** with the
+  pinned `requirements.txt`, set prod's `*_AI_PROVIDER`/`*_AI_MODEL` values
+  (read them from the stack, not the secrets) and an OpenRouter key. Seed
+  **invented** data through `POST /api/export/import` (a bundle with
+  `setup_complete: true` in `schema/wiki_config.json`). Then `POST /api/paste`
+  + `POST /api/sources/{f}/ingest` and `POST /api/chat?query=…`. Never use
+  client data for this.
+- **UI:** `vite build` with `VITE_API_BASE_URL=http://localhost:<port>/api`,
+  `vite preview`, and Playwright (desktop + mobile).
+- **nginx config (`nginx -t`) without Docker:** pull the exact `nginx:<tag>`
+  image layers from the Docker Hub registry API, unpack them, place
+  `nginx.conf` and `security-headers.conf` where `Dockerfile.prod` copies them,
+  and run the image's own binary through its musl loader
+  (`lib/ld-musl-x86_64.so.1 --library-path lib:usr/lib usr/sbin/nginx -t …`).
+  For an unprivileged run, only the pid, temp, log and `listen` paths are
+  changed. Add two controls (a missing snippet, a broken directive) to prove
+  the check fails when it should. The `/api/` proxy needs a stub backend, since
+  Docker's DNS (`127.0.0.11`) doesn't exist outside a container.
 
 ### Data
 
