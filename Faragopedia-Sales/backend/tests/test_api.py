@@ -113,9 +113,12 @@ def test_create_page_invalid_entity_type(client):
     assert response.status_code == 400
 
 
-def test_health_endpoint_gone(client):
+def test_health_is_liveness_only(client):
+    # The old wiki "health check" (removed in cda18b7, superseded by lint) is
+    # gone; /api/health is now a plain liveness probe for uptime monitoring.
     response = client.get("/api/health")
-    assert response.status_code == 404
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
 
 
 def test_lint_endpoint_exists(client):
