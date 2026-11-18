@@ -13,7 +13,7 @@ jobs:
       run:
         working-directory: Faragopedia-Sales/backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -32,7 +32,7 @@ jobs:
       run:
         working-directory: Faragopedia-Sales/tools/wiki_maintenance
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -47,7 +47,7 @@ jobs:
       run:
         working-directory: Faragopedia-Sales/tools/callsheet_ingest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -62,7 +62,7 @@ jobs:
       run:
         working-directory: Faragopedia-Sales/frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
