@@ -69,7 +69,9 @@ For each entry in `manifest.json` under `"files"` with `"status": "pending"`:
 
 4. Extract into markdown at `callsheets-md/YYYY-MM-DD-<production-slug>.md` using the
    schema below. Use the shoot date from the callsheet itself; if it has none, use the
-   entry's `modified` date. Missing fields are written as `unknown`, never omitted.
+   entry's `modified` date. Missing fields are written as `unknown`, never omitted, and
+   that includes table cells: a person with no phone gets `unknown` in the Phone cell,
+   never an empty cell.
    Where one file yields several callsheets, suffix the slug to keep filenames unique
    (e.g. `-recce`, `-day-1`, `-fitting`).
 5. Set the entry's `"status": "done"`.
@@ -172,6 +174,41 @@ here, while you still have the PDF's layout, section headings and column context
 front of you. That context is gone by the time anyone sees a bare string.
 
 - **`Role (verbatim)`** — copy exactly as printed. Never lose it; it is the audit trail.
+  Don't add commentary such as "(blank, under X)" or "(no heading printed)"; put doubts
+  in your end-of-batch report instead. Only two things are allowed besides the printed
+  label:
+  - **No role printed for the person:** use the section heading they sit under, as
+    printed (`Y3 | SALES`, `CLIENT | NEW BALANCE`, `MERCEDES`). If a sub-label inside the
+    section applies to them, add it in brackets: `Y3 | PR (PRC)`. Rows continuing a
+    labelled block (a list of names under one `DRESSER` label) take that label.
+  - **Relational roles:** name the principal in brackets, e.g.
+    `PRODUCER (for Jane Doe, Photographer)` or `CHAPERONE (for Sam, Model)`.
+- **Client-side sections → `client_contact`.** A section headed by the client brand, or
+  by `CLIENT`, holds the client's own people: `CLIENT`, `CLIENT | NEW BALANCE`, `ZARA`,
+  `MERCEDES (NOT ON SET)`, and on Y-3 sheets each brand team (`Y3 | SALES`, `Y3 | COMMS`,
+  `Y3 | SPOMA`, `PRODUCT`, `YY`). Everyone in such a section gets canonical
+  `client_contact`, whatever their printed title, with the brand in `Company / agency`
+  (`Y-3`, `Mercedes`, `Yohji Yamamoto (YY)`; a sub-brand label such as
+  `Y3 | PR (ADIDAS)` gives `Adidas`). The printed title stays in `Role (verbatim)`.
+  Work out which brand is the client from the production name, the `client` field and the
+  job folder.
+
+  **This matters more than any other mapping.** `other` is excluded from the wiki, and a
+  brand team mapped to `other` disappears without an error. On the 2025 Y-3 FW25
+  presentation sheet that would have dropped 95 client contacts.
+
+  It does **not** apply to outside firms working for the client or for Farago, even
+  when the client's name is in the heading. A PR agency (`Y3 | PR (PRC)`,
+  `SOCIALS | RADICAL`) or another production company (`PRODUCTION | FILM WORKS`) is
+  mapped by role as usual, with the firm in `Company / agency`.
+- **A `CREATIVE DIRECTION` section → `director`** for everyone in it with no other
+  printed role, with the studio in `Company / agency` (`CREATIVE DIRECTION | MATIERE
+  NOIRE` → `director`, `Matière Noire`). It is the show's or campaign's creative lead,
+  often an outside studio. Simon keeps directors, and counts creative direction as
+  `director`, not `art_director` (see roles.yml).
+- **Unfilled template rows are skipped.** A row whose name is still a placeholder
+  (`*NAME*`, `*NAME* @ *AGENCY*`, `+44 XXXX XXX XXX`) is an unused line from the
+  template, not a person. Leave it out and mention it in the end-of-batch report.
 - **`Canonical role`** — map to an entry in `roles.yml`. If nothing fits, write `other`
   and leave the verbatim value to be reviewed later. Never guess at a near-match:
   `Photo Assistant` is not a `photographer`, and `Producer (Photographer)` is the
@@ -199,6 +236,14 @@ front of you. That context is gone by the time anyone sees a bare string.
   separated by `+`, e.g. `photographer + director`.
 - **Organisations are not people.** `Hospital`, `Catering`, `Medic`, `Lighting EQ` and
   similar belong under **Production services**, not in the Contacts table.
+- **A literal `|` inside a cell is written `\|`** (`Y3 \| SALES`). Every table row must
+  have exactly as many cells as its header; the ingest's strict parser rejects the file
+  otherwise.
+- **Children.** Copy every word that marks a child or a guardian exactly as printed:
+  KIDS, YOUNG, CHILD, BABY, CHAPERONE, MOTHER, GUARDIAN, `c/o …` notes and agency names.
+  The ingest uses them to keep children out of the wiki (ADR 0011), so they must never be
+  dropped, shortened or tidied. Don't filter anyone out here either: withholding happens
+  at ingest.
 
 ## Slug rules
 

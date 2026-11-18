@@ -11,6 +11,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import Response
 
 from api.routes import set_wiki_manager
+from agent.wiki_manager import _check_zip_members
 from agent.workspace_manager import (
     get_wiki_dir, get_sources_dir, get_archive_dir, get_snapshots_dir, get_schema_dir,
     get_active_workspace_id, create_workspace,
@@ -134,6 +135,10 @@ async def import_bundle(file: UploadFile = File(...)):
 
         with tempfile.TemporaryDirectory() as staging_str:
             staging = Path(staging_str)
+            try:
+                _check_zip_members(zf, staging_str)
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
             zf.extractall(staging)
             # If the zip had a wrapper directory, descend into it
             actual_staging = staging / prefix.rstrip("/") if prefix else staging

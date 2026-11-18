@@ -46,6 +46,8 @@ These variables are critical for ensuring files created by the AI are accessible
 | `VITE_ALLOWED_HOST` | Allowed hostname for the frontend. | `localhost` |
 | `WISECRAWLER_BASE_URL`| (Optional) URL for a WiseCrawler instance for web scraping. | - |
 | `WISECRAWLER_API_KEY` | (Optional) API key for WiseCrawler. | - |
+| `CORS_ALLOWED_ORIGINS` | Comma list of origins allowed to call the backend from a browser. Unset = `*` (local dev, frontend on another port). Empty = none (production, which is same-origin). Credentials are never allowed. ADR 0012. | unset; `""` in `docker-compose.prod.yml` |
+| `ENABLE_API_DOCS` | `true` serves `/docs`, `/redoc` and `/openapi.json`. Leave off anywhere reachable from the internet. | off |
 
 ---
 
@@ -169,6 +171,29 @@ curl -X PUT "https://portainer.ai-wise.uk/api/stacks/1/git/redeploy?endpointId=3
 Confirm the rebuild actually happened — `docker ps` on the VPS should show
 both `faragopedia-vps-*` containers with a fresh `CREATED` time, and the
 response's `GitConfig.ConfigHash` should match the branch's latest commit.
+
+### Health, headers and backups (ADR 0012)
+
+- **Liveness:** `GET /api/health` → `{"status":"ok"}`, open on the external API
+  hostname (`https://faragopedia-api-vps.ai-wise.uk/api/health`) so an uptime
+  monitor needs no key. The backend container has a Docker healthcheck on it.
+- **Uptime monitoring:** Uptime Kuma on yeti (home), two monitors since
+  2026-11-18. "Faragopedia API (VPS)" is an HTTP keyword check every 5 min.
+  Until ADR 0012 is deployed it checks `/` for `Hello World`; **after the
+  deploy, switch it to `/api/health` with keyword `ok`.** "Faragopedia backup
+  (gecko)" is a push monitor (see [`backup.md`](backup.md)). The frontend is
+  not monitored directly: behind Cloudflare Access, a check only ever sees the
+  login redirect.
+- **Security headers:** `frontend/security-headers.conf`. The CSP is
+  **Report-Only** for now. After a deploy, open the live site with the browser
+  console open and click around; if no CSP reports appear, rename the header
+  to `Content-Security-Policy`. If the inline theme script in `index.html`
+  changes, recompute its hash from `dist/index.html` after `npm run build`
+  (sha256 of the script body, base64) and update the header.
+- **Backups:** gecko pulls the data nightly (read-only key on the VPS:
+  `gecko-root-faragopedia-backup` in `~ubuntu/.ssh/authorized_keys`, locked
+  to `rrsync -ro`), keeps an encrypted restic repo and mirrors it to yeti.
+  Don't remove that key. Install and restore: [`backup.md`](backup.md).
 
 ### Data
 

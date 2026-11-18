@@ -10,6 +10,7 @@ import ImportWikiModal from './ImportWikiModal';
 
 import { API_BASE } from '../config';
 import { formatPageName } from '../utils/formatPageName';
+import { asOfDate } from '../utils/asOfDate';
 import ErrorToast from './ErrorToast';
 import ConfirmDialog from './ConfirmDialog';
 import MoveDialog from './MoveDialog';
@@ -36,6 +37,13 @@ type SearchIndex = {
   }>;
 };
 
+// Simon's feedback #9 (Oct 2026). Draft wording, based on his own point in the
+// discovery brief; replace with the text he approves.
+const HOMEPAGE_DISCLAIMER =
+  'Most of this information is extracted automatically from callsheets, emails and other ' +
+  'documents, so some details may be incomplete, out of date or wrong. Check anything ' +
+  'important before relying on it, and report mistakes so they can be fixed.';
+
 interface WikiViewProps {
   pagesMetadata: Record<string, { read: boolean; read_at: string | null }>;
   onMarkPageRead: (path: string) => void;
@@ -43,9 +51,11 @@ interface WikiViewProps {
   initialPagePath?: string | null;
   /** Called once initialPagePath has been consumed, so the caller can clear it. */
   onInitialPageConsumed?: () => void;
+  /** Bumped by the app's Home button: return to the wiki overview. */
+  homeSignal?: number;
 }
 
-const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, initialPagePath, onInitialPageConsumed }) => {
+const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, initialPagePath, onInitialPageConsumed, homeSignal }) => {
   const [pageTree, setPageTree] = useState<PageTree>({});
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
@@ -350,6 +360,28 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, init
       setContentLoading(false);
     }
   };
+
+  // Home: back to the overview (welcome page). The page being left goes on the
+  // history stack, so Back returns to it.
+  const goHome = () => {
+    if (isEditing && editedContent !== content) {
+      if (!window.confirm('You have unsaved changes. Discard them and go to the homepage?')) return;
+    }
+    if (selectedPage) {
+      setHistoryStack(prev => [...prev, selectedPage]);
+      setForwardStack([]);
+    }
+    setIsEditing(false);
+    setIsSystemPage(false);
+    setSelectedPage(null);
+    setContent(null);
+    setShowMobileList(false);
+  };
+
+  useEffect(() => {
+    if (homeSignal) goHome();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSignal]);
 
   useEffect(() => {
     if (!initialPagePath) return;
@@ -1586,8 +1618,14 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, init
             <div className="wiki-doc prose prose-slate dark:prose-invert max-w-4xl mx-auto break-words">
               {(() => {
                  const { tags, content: cleanContent } = parseFrontmatter(content);
+                 const correctAsOf = asOfDate(cleanContent);
                  return (
                    <>
+                     {correctAsOf && (
+                       <p className="not-prose text-xs text-gray-500 dark:text-gray-400 mb-4">
+                         Information correct as of <span className="font-medium text-gray-700 dark:text-gray-300">{correctAsOf}</span>
+                       </p>
+                     )}
                      {tags.length > 0 && (
                        <div className="flex flex-wrap gap-2 mb-8 p-4 bg-gray-50/80 dark:bg-gray-800/80 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm backdrop-blur-sm">
                          {tags.map((t, idx) => (
@@ -1756,6 +1794,9 @@ const WikiView: React.FC<WikiViewProps> = ({ pagesMetadata, onMarkPageRead, init
                     Your team's structured, linked knowledge base — every source document ingested here
                     becomes a searchable, cross-referenced wiki page. Select a page from the list to view
                     its content, or ask the AI chat a question about anything below.
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 max-w-md mb-4 leading-relaxed border border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/30 rounded-lg px-3 py-2">
+                    {HOMEPAGE_DISCLAIMER}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-600 mb-8">
                     {totalPageCount} page{totalPageCount !== 1 ? 's' : ''} across{' '}

@@ -1,0 +1,13 @@
+[Unit]
+Description=Faragopedia backup: pull from VPS, restic, mirror to yeti
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/faragopedia-backup
+# systemd gives services no $HOME, so restic can't find its cache without this.
+CacheDirectory=faragopedia-backup
+Environment=RESTIC_CACHE_DIR=/var/cache/faragopedia-backup
+Nice=10
+IOSchedulingClass=idle

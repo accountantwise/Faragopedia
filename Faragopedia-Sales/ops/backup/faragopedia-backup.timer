@@ -1,0 +1,12 @@
+[Unit]
+Description=Nightly Faragopedia backup
+
+[Timer]
+# gecko runs on Asia/Bangkok: 03:30 here is 20:30 UK time, a quiet hour for the wiki.
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=10m
+# Catch up after gecko has been off.
+Persistent=true
+
+[Install]
+WantedBy=timers.target
