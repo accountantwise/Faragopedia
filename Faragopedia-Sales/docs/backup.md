@@ -46,8 +46,10 @@ Host values (VPS address and port, yeti address) go in
    `journalctl -u faragopedia-backup -n 20`. It ends with
    `OK: <n> pages, <n> snapshots, mirrored to yeti`.
 5. Copy the restic password into Vaultwarden.
-6. Optional: an Uptime Kuma **push** monitor (heartbeat 26 h), with its URL
-   in `HEALTHCHECK_URL`, so a missed night raises an alert.
+6. An Uptime Kuma **push** monitor (heartbeat 26 h, 0 retries), with its push
+   URL (the part before `?`) in `HEALTHCHECK_URL`, so a missed or failed
+   night raises an alert. Set up 2026-11-18: "Faragopedia backup (gecko)" on
+   the Kuma instance on yeti.
 
 ## Restore test (after install, then quarterly)
 

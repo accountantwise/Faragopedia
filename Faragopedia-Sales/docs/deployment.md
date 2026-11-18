@@ -177,6 +177,13 @@ response's `GitConfig.ConfigHash` should match the branch's latest commit.
 - **Liveness:** `GET /api/health` → `{"status":"ok"}`, open on the external API
   hostname (`https://faragopedia-api-vps.ai-wise.uk/api/health`) so an uptime
   monitor needs no key. The backend container has a Docker healthcheck on it.
+- **Uptime monitoring:** Uptime Kuma on yeti (home), two monitors since
+  2026-11-18. "Faragopedia API (VPS)" is an HTTP keyword check every 5 min.
+  Until ADR 0012 is deployed it checks `/` for `Hello World`; **after the
+  deploy, switch it to `/api/health` with keyword `ok`.** "Faragopedia backup
+  (gecko)" is a push monitor (see [`backup.md`](backup.md)). The frontend is
+  not monitored directly: behind Cloudflare Access, a check only ever sees the
+  login redirect.
 - **Security headers:** `frontend/security-headers.conf`. The CSP is
   **Report-Only** for now. After a deploy, open the live site with the browser
   console open and click around; if no CSP reports appear, rename the header
