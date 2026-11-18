@@ -74,3 +74,27 @@ Replaying `minors.py` over every extract withholds exactly the same 75 rows on t
   source callsheets in Farago's job folders do. They stay outside this repo.
 - Open: whether Farago want the extracts' child rows redacted too, and whether Simon wants to
   confirm this policy against Farago's own safeguarding policy.
+
+## Amendment 2026-11-18: chaperones, and one child withholds all talent on the job
+
+An end-to-end test (three callsheets with children confirmed on the originals; extracts from
+the existing set, Sonnet and Haiku; the rendered page and contact records searched for every
+child's, guardian's and child-agent's details) found four gaps, fixed in `minors.py`:
+
+1. A combined role (`talent + other`, for MODEL/CHAPERONE) was not treated as talent.
+2. The anonymous note copied "<agency> (agent for <child>)" from the agent's company cell.
+   The note now carries the agency only.
+3. Chaperones were not a signal. Chaperone rows are now withheld, and the talent a chaperone
+   row names is a child, even on an adult job booked through an adult agency. This narrows
+   the "known limit" above: a 16- or 17-year-old with a chaperone listed is now caught.
+4. A child can appear with no signal at all (a first name taken from a call-time line).
+
+**Decision (Nick):** once any child is found on a job (kids job, child role, kids agency,
+or a chaperone), **every talent row on that job is withheld**, adult or not. The cost is
+adults dropped from such pages: on job 447 the two band members, on job 468 seven models
+who were probably adults. Accepted because the job page links the callsheet and job folder,
+so anyone at Farago who needs the full cast can still see it there; the wiki's job is to
+never be the place a child's details turn up.
+
+Also: a kept row whose role, company or contact route names a withheld person is withheld.
+On the 83 jobs in the extracts at the time, only 447 and 468 change.

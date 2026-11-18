@@ -45,7 +45,7 @@ def test_all_talent_on_a_kids_job_is_withheld_but_crew_is_kept():
 
 
 def test_child_actor_on_an_adult_job_is_withheld_by_role_or_agency():
-    adult = person(name="Band Member", role_raw="BAND / EXAMPLE BAND")
+    adult = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
     young = person(name="Kidactor", role_raw="YOUNG LEAD")
     friend = person(name="Kidfriend", role_raw="FRIEND",
                     contact_via=["Agentname, Example Kidz, +44 7000 000 002"])
@@ -87,3 +87,58 @@ def test_care_of_agent_route_becomes_the_agency():
 def test_bare_care_of_company_is_quarantined():
     why = company_problems("c/o Example Magazine", person_keys=set(), row_person="AB", roles=set())
     assert any("c/o" in w for w in why)
+
+
+# --- Holes found by the 2026-11-18 model test (extracts made by a cheaper model) -------
+
+def test_combined_talent_role_is_still_talent():
+    # MODEL/CHAPERONE came out as `talent + other`; the old check wanted exactly `talent`.
+    p = person(canonical="talent + other", name="Maybechild", role_raw="MODEL")
+    assert why_withheld(p, kids_job=True) == "child"
+
+
+def test_chaperone_row_is_withheld_and_marks_its_child_on_an_adult_job():
+    # Adult campaign, model booked direct (no kids agency, no child word): only the
+    # chaperone row shows she is a minor. The chaperone itself is filtered out as `other`
+    # before withholding, so the signal has to come from the unfiltered sheet.
+    crew = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
+    teen = person(name="Teen Model", role_raw="MODEL", company="c/o Brand")
+    chap = person(canonical="other", name="Chap Person", role_raw="CHAPERONE (for Teen Model, Model)")
+    d = day([crew, teen], campaign="Brand Lookbook FW25")
+    d.sheet.people.extend([crew, teen, chap])
+    w = withhold_minors([d])
+    assert d.people == [crew]
+    assert "teen model" in w.children
+
+
+def test_one_child_on_a_job_withholds_all_talent():
+    # A child named only in a call-time line came out as plain talent with no signal.
+    crew = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
+    young = person(name="Kidactor", role_raw="YOUNG LEAD")
+    unmarked = person(name="Firstname", role_raw="TALENT CALL TIMES")
+    days = [day([crew, young, unmarked], campaign="Example Band Music Video")]
+    w = withhold_minors(days)
+    assert days[0].people == [crew]
+    assert w.children == {"kidactor", "firstname"}
+
+
+def test_note_names_the_agency_only():
+    # The runbook asks for "agent for <principal>" in the agent's company cell; that text
+    # must not carry the child's name into the anonymous note.
+    kid = person(name="Testchild", contact_via=["Agentname, Example Kids Ltd (agent for Testchild, Model), +44 7000 000 005"])
+    kid2 = person(name="Otherchild", company="Example Kidz; agent for Otherchild (Model)")
+    days = [day([kid, kid2], campaign="Brand Kids SS26")]
+    w = withhold_minors(days)
+    note = w.note()
+    assert "Example Kids Ltd" in note and "Example Kidz" in note
+    assert "Testchild" not in note and "Otherchild" not in note and "agent for" not in note
+
+
+def test_kept_row_that_names_a_withheld_child_is_withheld():
+    kid = person(name="Testchild", role_raw="YOUNG LEAD")
+    tutor = person(canonical="crew_lead", name="Tutor Person", role_raw="TUTOR",
+                   company="Tutor for Testchild")
+    crew = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
+    days = [day([kid, tutor, crew], campaign="Example Band Music Video")]
+    withhold_minors(days)
+    assert days[0].people == [crew]
