@@ -1,5 +1,5 @@
 # Node 20 reached end of life on 2026-04-30.
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 
 WORKDIR /app
 
