@@ -53,18 +53,21 @@ Host values (VPS address and port, yeti address) go in
 
 ```bash
 sudo bash -c '
-export RESTIC_REPOSITORY=/srv/backup/faragopedia/restic RESTIC_PASSWORD_FILE=/srv/backup/faragopedia/restic-pass
+export RESTIC_REPOSITORY=/srv/backup/faragopedia/restic RESTIC_PASSWORD_FILE=/srv/backup/faragopedia/restic-pass RESTIC_CACHE_DIR=/var/cache/faragopedia-backup
 restic snapshots --compact
-restic restore latest:/srv/backup/faragopedia/staging --target /tmp/fp-restore-test -q
+restic restore latest --target /tmp/fp-restore-test -q
 find /tmp/fp-restore-test -name "*.md" | wc -l
 rm -rf /tmp/fp-restore-test'
 ```
 
-The page count should match the live wiki.
+The page count should match the live wiki. The script backs up `.` from the
+staging folder, so a snapshot's root *is* the data folder: restore `latest`
+(or a snapshot id) with no sub-path, and the target holds `workspaces/…` directly.
 
 ## Real restore
 
 1. On gecko, restore the snapshot to a folder (as above, without the `rm`).
+   That folder is the contents of `~/faragopedia-data`.
 2. Stop the stack in Portainer.
 3. On the VPS, move the current data aside:
    `mv ~/faragopedia-data ~/faragopedia-data.broken-$(date +%F)`.
