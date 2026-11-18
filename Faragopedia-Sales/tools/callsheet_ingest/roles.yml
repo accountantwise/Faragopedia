@@ -335,7 +335,7 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast]
+    aliases: [Talent, Model, Artist Collaborator, Cast, Special Talent]
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
