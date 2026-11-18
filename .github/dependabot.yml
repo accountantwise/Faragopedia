@@ -1,27 +1,60 @@
-# Weekly upgrade PRs. requirements.txt is pinned (2026-11-18), so nothing moves
-# without a PR that CI has tested. Security advisories open PRs immediately.
+# Dependabot policy (2026-11-18). Goal: a small, safe batch of PRs that CI can
+# vouch for. Major upgrades are planned work, not weekly PRs: they change APIs
+# (react-markdown 10 drops `className`, Vite/TypeScript majors change builds)
+# and CI only proves the build, not the behaviour.
+#
+# Note: these ignore rules also apply to security updates, so a fix that only
+# exists in a new major version won't be proposed automatically. GitHub's
+# security alerts still list it; handle those by hand.
 version: 2
 updates:
+  # Backend Python (requirements.txt is pinned): one grouped PR a week.
   - package-ecosystem: pip
     directory: /Faragopedia-Sales/backend
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
-      langchain:
-        patterns: ["langchain*"]
-    open-pull-requests-limit: 5
+      backend-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Frontend npm: one grouped PR a week. lucide-react 0.x -> 1.x counts as major.
   - package-ecosystem: npm
     directory: /Faragopedia-Sales/frontend
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      frontend-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Base images, monthly. Python stays on 3.11 (what prod runs and CI-tested
+  # pins assume) until a planned upgrade; Node majors are planned too. nginx
+  # minor (mainline) bumps are allowed, and should get a quick `nginx -t`.
   - package-ecosystem: docker
     directories:
       - /Faragopedia-Sales/backend
       - /Faragopedia-Sales/frontend
     schedule:
       interval: monthly
+    ignore:
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions, monthly, all in one PR. Action majors are usually runner
+  # bumps and CI exercises every action we use.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
