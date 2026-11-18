@@ -14,7 +14,7 @@ jobs:
         working-directory: Faragopedia-Sales/backend
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install dependencies
@@ -33,7 +33,7 @@ jobs:
         working-directory: Faragopedia-Sales/tools/wiki_maintenance
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install dependencies
@@ -48,7 +48,7 @@ jobs:
         working-directory: Faragopedia-Sales/tools/callsheet_ingest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install dependencies
