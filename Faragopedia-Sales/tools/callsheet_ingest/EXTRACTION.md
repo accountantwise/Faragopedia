@@ -239,6 +239,10 @@ front of you. That context is gone by the time anyone sees a bare string.
 - **A literal `|` inside a cell is written `\|`** (`Y3 \| SALES`). Every table row must
   have exactly as many cells as its header; the ingest's strict parser rejects the file
   otherwise.
+- **People come from the contact, crew and cast lists only.** A name that appears only
+  in a call-time line (`9:00 AM CALL TIME: <first names>`) is not added to Contacts; note
+  it under Notes. On the Good Neighbours "Ripples" sheet such a name was a child with no
+  other signal, and as a Contacts row it would have reached the wiki.
 - **Children.** Copy every word that marks a child or a guardian exactly as printed:
   KIDS, YOUNG, CHILD, BABY, CHAPERONE, MOTHER, GUARDIAN, `c/o …` notes and agency names.
   The ingest uses them to keep children out of the wiki (ADR 0011), so they must never be
