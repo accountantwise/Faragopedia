@@ -12,7 +12,18 @@ Who counts as a child is decided from the callsheet, because callsheets never gi
 - talent whose role says so (YOUNG SCOTT, CHILD, KID, BABY, BOY, GIRL, TEEN);
 - talent booked through a kids agency (name contains Kids / Kidz / Children / Junior, or a
   known children's agency below);
-- anyone whose role is a parent or guardian of someone on set (MOTHER, FATHER, GUARDIAN).
+- anyone whose role is a parent or guardian of someone on set (MOTHER, FATHER, GUARDIAN),
+  and every CHAPERONE: chaperones are often parents, and the row usually names the child;
+- talent a chaperone row says it is "for": a chaperone means a minor, even on an adult job
+  booked through an adult agency;
+- once any child is found on a job, every other talent row on that job too. Callsheets
+  give no ages, and a child can appear with no signal at all (a first name in a call-time
+  line, a "FRIEND" booked direct), so one confirmed child is treated as a children's cast.
+
+A combined role (`talent + other`, for MODEL/CHAPERONE) counts as talent. After all of
+that, any kept row whose role, company or contact route still names a withheld person is
+withheld too, and an agency named in the anonymous note is cut back to the agency itself
+("Example Kids Ltd (agent for <child>)" -> "Example Kids Ltd").
 
 This over-withholds on purpose: an adult model dropped from a Zara Kids page costs nothing,
 a child's page in the wiki is the failure this exists to prevent.
@@ -30,7 +41,11 @@ KIDS_AGENCIES = ("bruce and brown", "bruce & brown", "maya inc", "bizzy", "arwen
 
 KIDS_WORDS = re.compile(r"\b(kids?|kidz|kidso|kidsa|children|childrens|child|junior|juniors|baby|babies)\b", re.I)
 CHILD_ROLE = re.compile(r"\b(young|child|kid|kids|baby|boy|girl|teen|toddler|infant|junior)\b", re.I)
-PARENT_ROLE = re.compile(r"\b(mother|father|mum|mom|dad|parent|guardian)\b", re.I)
+PARENT_ROLE = re.compile(r"\b(mother|father|mum|mom|dad|parent|guardian|chaperone)\b", re.I)
+# "CHAPERONE (for Sam, Model)" in the role, or "Chaperone for Sam (Model)" in the company.
+CHAPERONE_FOR = re.compile(r"chaperone\b[^|]*?\bfor\s+([^,()|;]+)", re.I)
+# Everything after the agency itself in an agent's company cell.
+AGENT_FOR_TAIL = re.compile(r"\s*(?:[;,(]|\bagent for\b|\bfor\b).*$", re.I)
 PHONE = re.compile(r"^\+?[\d ()-]{7,}$")
 
 
@@ -50,13 +65,36 @@ def is_kids_agency(text: str) -> bool:
     return bool(KIDS_WORDS.search(t)) or any(a in t for a in KIDS_AGENCIES)
 
 
-def why_withheld(p, kids_job: bool) -> str | None:
+def is_talent(canonical: str) -> bool:
+    """`talent`, or a combined role that includes it (`talent + other`)."""
+    return any(c.strip() == "talent" for c in (canonical or "").split("+"))
+
+
+def _key(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (name or "").lower())
+
+
+def chaperoned(days) -> set[str]:
+    """Names (as keys) that a chaperone row says it is for. Read from the unfiltered sheet:
+    chaperones map to `other` and are gone from `d.people` by the time this runs."""
+    out = set()
+    for d in days:
+        for p in d.sheet.people + list(d.people):
+            for text in (p.role_raw, p.company):
+                for m in CHAPERONE_FOR.finditer(text or ""):
+                    out.add(_key(m.group(1)))
+    return out - {""}
+
+
+def why_withheld(p, kids_job: bool, chaperoned_keys: set[str] = frozenset()) -> str | None:
     """Why this callsheet row must not reach the wiki, or None to keep it."""
     role = p.role_raw or ""
-    if PARENT_ROLE.search(role):
+    if PARENT_ROLE.search(role) or PARENT_ROLE.search(p.company or ""):
         return "parent"
-    if p.canonical != "talent":
+    if not is_talent(p.canonical):
         return None
+    if _key(p.name) in chaperoned_keys:
+        return "child"
     if kids_job:
         return "child"
     if CHILD_ROLE.search(role):
@@ -72,14 +110,20 @@ def agency_of(p) -> str | None:
     contact_via '<agent>, Example Kids Ltd, +44 7…' -> 'Example Kids Ltd'."""
     company = (p.company or "").strip()
     if "@" in company:
-        return company.rsplit("@", 1)[1].strip() or None
+        return _agency_only(company.rsplit("@", 1)[1])
     if company and company.lower() not in ("unknown", "—", "-") and not company.lower().startswith("c/o"):
-        return company
+        return _agency_only(company)
     for via in p.contact_via:
         parts = [x.strip() for x in via.split(",") if x.strip() and not PHONE.match(x.strip()) and "@" not in x]
         if len(parts) >= 2:
-            return parts[1]
+            return _agency_only(parts[1])
     return None
+
+
+def _agency_only(text: str) -> str | None:
+    """'KIDS LONDON LTD (agent for <child>, MODEL)' -> 'KIDS LONDON LTD'. The note is the
+    one place a withheld row leaves a trace, so it carries the agency and nothing else."""
+    return AGENT_FOR_TAIL.sub("", (text or "").strip()).strip() or None
 
 
 @dataclass
@@ -112,11 +156,15 @@ def withhold_minors(days) -> Withheld:
     Run before build_roster / render_job_page / any page creation."""
     out = Withheld()
     kids_job = is_kids_job(days)
+    chap = chaperoned(days)
     seen: set[str] = set()
+    # One confirmed child makes every talent row on the job a possible child (see module doc).
+    children_on_job = kids_job or any(
+        why_withheld(p, kids_job, chap) == "child" for d in days for p in d.people)
     for d in days:
         kept = []
         for p in d.people:
-            why = why_withheld(p, kids_job)
+            why = why_withheld(p, children_on_job, chap)
             if not why:
                 kept.append(p)
                 continue
@@ -129,4 +177,16 @@ def withhold_minors(days) -> Withheld:
                 seen.add(_agency_key(a))
                 out.agencies.append(a)
         d.people[:] = kept
+    # Last pass: nothing kept may still name a withheld person ("Chaperone for <child>",
+    # "agent for <child>", a contact route through a parent).
+    gone = [n for n in out.children | out.parents if len(_key(n)) >= 3]
+    if gone:
+        pat = re.compile(r"(?<![a-z])(" + "|".join(re.escape(n) for n in gone) + r")(?![a-z])", re.I)
+        for d in days:
+            linked = [p for p in d.people
+                      if pat.search(" ".join([p.role_raw or "", p.company or "", *p.contact_via]))]
+            for p in linked:
+                out.parents.add(p.name.strip().lower())
+            d.people[:] = [p for p in d.people if p not in linked]
+    out.agencies = [a for a in out.agencies if not (gone and pat.search(a))]
     return out
