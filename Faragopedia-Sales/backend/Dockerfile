@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.15-slim
 
 # Install gosu and other utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
