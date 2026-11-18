@@ -25,6 +25,14 @@ services:
       - WISECRAWLER_API_KEY=${WISECRAWLER_API_KEY}
       - FARAGOPEDIA_API_KEY=${FARAGOPEDIA_API_KEY}
       - FARAGOPEDIA_API_HOSTNAME=${FARAGOPEDIA_API_HOSTNAME}
+      # Production is same-origin (ADR 0010): no cross-origin browser access at all.
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8300/api/health', timeout=5)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: always
     networks:
       - edge

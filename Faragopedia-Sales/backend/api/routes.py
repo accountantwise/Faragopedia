@@ -580,6 +580,8 @@ async def restore_snapshot(wm: WM, snapshot_id: str):
         return {"success": True, "message": f"Snapshot {snapshot_id} restored successfully"}
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Snapshot {snapshot_id} not found")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error restoring snapshot: {str(e)}")
 
@@ -591,6 +593,8 @@ async def delete_snapshot(wm: WM, snapshot_id: str):
         return {"success": True}
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Snapshot {snapshot_id} not found")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error deleting snapshot: {str(e)}")
 

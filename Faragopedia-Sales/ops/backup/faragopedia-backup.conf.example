@@ -1,0 +1,9 @@
+# /etc/faragopedia-backup.conf on gecko (root:root 600). Host values live here,
+# not in the repo.
+VPS_HOST=CHANGE_ME          # VPS IP or hostname
+VPS_PORT=CHANGE_ME          # VPS SSH port
+VPS_USER=ubuntu
+YETI_HOST=CHANGE_ME         # yeti LAN address
+YETI_USER=colacho
+# Optional: Uptime Kuma push monitor URL (without query string).
+HEALTHCHECK_URL=

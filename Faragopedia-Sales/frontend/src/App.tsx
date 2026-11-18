@@ -7,7 +7,7 @@ import ArchiveView from './components/ArchiveView';
 import LintView from './components/LintView';
 import LinkView from './components/LinkView';
 import ChatPanel from './components/ChatPanel';
-import { Loader2, Menu, X } from 'lucide-react';
+import { Home, Loader2, Menu, X } from 'lucide-react';
 import { API_BASE } from './config';
 import SettingsDrawer from './components/SettingsDrawer';
 import { useOperationToasts } from './OperationToastContext';
@@ -20,6 +20,7 @@ const App: React.FC = () => {
   const [existingFolders, setExistingFolders] = useState<string[]>([]);
   const [currentView, setCurrentView] = useState('Wiki');
   const [pendingChatPage, setPendingChatPage] = useState<string | null>(null);
+  const [homeSignal, setHomeSignal] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sourcesMetadata, setSourcesMetadata] = useState<Record<string, { ingested: boolean; ingested_at: string | null; tags: string[] }>>({});
@@ -265,6 +266,13 @@ const App: React.FC = () => {
     fetchWorkspaces();
   };
 
+  // Simon's feedback #8: a way back to the homepage from anywhere, desktop and mobile.
+  const goHome = () => {
+    setCurrentView('Wiki');
+    setMobileMenuOpen(false);
+    setHomeSignal(n => n + 1);
+  };
+
   const renderContent = () => {
     switch (currentView) {
       case 'Wiki':
@@ -275,6 +283,7 @@ const App: React.FC = () => {
             onMarkPageRead={handleMarkPageRead}
             initialPagePath={pendingChatPage}
             onInitialPageConsumed={() => setPendingChatPage(null)}
+            homeSignal={homeSignal}
           />
         );
       case 'Sources':
@@ -390,10 +399,19 @@ const App: React.FC = () => {
           >
             <Menu className="w-6 h-6" />
           </button>
+          <button
+            onClick={goHome}
+            className="ml-2 p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center gap-2 transition-colors focus:ring-2 focus:ring-blue-500 outline-none"
+            aria-label="Go to homepage"
+            title="Homepage"
+          >
+            <Home className="w-5 h-5" />
+            <span className="hidden sm:inline text-sm font-medium">Home</span>
+          </button>
           {!sidebarOpen && (
-            <span className="hidden md:ml-4 font-bold text-gray-800 dark:text-gray-200 md:inline-block">{wikiName}</span>
+            <button onClick={goHome} className="hidden md:ml-2 font-bold text-gray-800 dark:text-gray-200 md:inline-block hover:underline">{wikiName}</button>
           )}
-          <span className="ml-4 font-bold text-gray-800 dark:text-gray-200 md:hidden">{wikiName}</span>
+          <button onClick={goHome} className="ml-2 font-bold text-gray-800 dark:text-gray-200 md:hidden truncate">{wikiName}</button>
         </div>
         <div className="flex-grow overflow-hidden relative h-full">
           {renderContent()}

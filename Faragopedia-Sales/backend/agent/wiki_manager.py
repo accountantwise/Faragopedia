@@ -4,6 +4,7 @@ import datetime
 import re
 import json
 import shutil
+import tempfile
 import yaml
 import zipfile
 from pydantic import BaseModel, Field
@@ -168,6 +169,43 @@ Instructions:
 7. Use action='create' for new pages, action='update' for modified existing pages.
 8. Only include pages that genuinely need to change — do not regenerate unchanged pages.
 9. Write a one-line summary (e.g. "Fixed 3 findings: updated 2 pages, created 1 stub")."""
+
+
+_SNAPSHOT_ID_RE = re.compile(r"[A-Za-z0-9_-]{1,64}")
+# A wiki snapshot is a few MB; this only stops a zip bomb filling the disk.
+_MAX_SNAPSHOT_UNCOMPRESSED_BYTES = 2 * 1024 ** 3
+
+
+def _within(base: str, path: str) -> bool:
+    base = os.path.realpath(base)
+    return os.path.commonpath([base, os.path.realpath(path)]) == base
+
+
+def _check_zip_members(zf: zipfile.ZipFile, dest: str) -> None:
+    """Refuse an archive whose entries would land outside dest or are too large.
+    zipfile already strips '..' on extract; this is defence in depth and makes a
+    tampered archive fail loudly instead of being silently rewritten."""
+    total = 0
+    for info in zf.infolist():
+        if info.filename.startswith(("/", "\\")) or ".." in info.filename.replace("\\", "/").split("/"):
+            raise ValueError(f"Unsafe entry in snapshot: {info.filename!r}")
+        if not _within(dest, os.path.join(dest, info.filename)):
+            raise ValueError(f"Unsafe entry in snapshot: {info.filename!r}")
+        total += info.file_size
+        if total > _MAX_SNAPSHOT_UNCOMPRESSED_BYTES:
+            raise ValueError("Snapshot is too large to restore")
+
+
+def _safe_page_filename(name) -> str | None:
+    """A bare 'something.md' filename, or None. Used for client-supplied rename
+    targets, which must never carry a directory part."""
+    if not isinstance(name, str):
+        return None
+    if "/" in name or "\\" in name or "\x00" in name or name in (".", ".."):
+        return None
+    if not name.endswith(".md") or name == ".md" or name.startswith("."):
+        return None
+    return name
 
 
 class WikiManager:
@@ -925,30 +963,64 @@ class WikiManager:
                 snapshots.append(Snapshot(**data))
         return sorted(snapshots, key=lambda s: s.created_at, reverse=True)
 
+    def _snapshot_zip_path(self, snapshot_id: str) -> str:
+        # Ids come straight from the URL. Ours are timestamps; allow only the
+        # characters a filename needs so no id can name a path outside snapshots_dir.
+        if not isinstance(snapshot_id, str) or not _SNAPSHOT_ID_RE.fullmatch(snapshot_id):
+            raise ValueError(f"Invalid snapshot id: {snapshot_id!r}")
+        return os.path.join(self.snapshots_dir, f"{snapshot_id}.zip")
+
     def restore_snapshot(self, snapshot_id: str):
-        zip_path = os.path.join(self.snapshots_dir, f"{snapshot_id}.zip")
+        zip_path = self._snapshot_zip_path(snapshot_id)
         if not os.path.exists(zip_path):
             raise FileNotFoundError(f"Snapshot {snapshot_id} not found")
 
-        with zipfile.ZipFile(zip_path, 'r') as zf:
-            bad = zf.testzip()
-            if bad is not None:
-                raise zipfile.BadZipFile(f"Corrupt entry in snapshot: {bad}")
+        # Staged swap: extract to a sibling folder first and only touch the live
+        # wiki once that has fully succeeded. The previous version emptied the
+        # wiki and then extracted, so any extract error (disk full, bad entry)
+        # left no wiki at all. Siblings share the filesystem, so the moves below
+        # are renames, not copies.
+        parent = os.path.dirname(os.path.abspath(self.wiki_dir))
+        staging = tempfile.mkdtemp(prefix=".restore-staging-", dir=parent)
+        backup = None
+        keep_backup = False
+        try:
+            with zipfile.ZipFile(zip_path, 'r') as zf:
+                bad = zf.testzip()
+                if bad is not None:
+                    raise zipfile.BadZipFile(f"Corrupt entry in snapshot: {bad}")
+                _check_zip_members(zf, staging)
+                zf.extractall(staging)
 
-            for item in os.listdir(self.wiki_dir):
-                item_path = os.path.join(self.wiki_dir, item)
-                if os.path.isdir(item_path):
-                    shutil.rmtree(item_path)
-                else:
-                    os.remove(item_path)
-
-            zf.extractall(self.wiki_dir)
+            backup = tempfile.mkdtemp(prefix=".restore-previous-", dir=parent)
+            moved_out: list[str] = []
+            try:
+                for item in os.listdir(self.wiki_dir):
+                    shutil.move(os.path.join(self.wiki_dir, item), os.path.join(backup, item))
+                    moved_out.append(item)
+                for item in os.listdir(staging):
+                    shutil.move(os.path.join(staging, item), os.path.join(self.wiki_dir, item))
+            except Exception:
+                # Put the previous wiki back before re-raising. If that also
+                # fails, keep the backup folder: it is the only copy left.
+                keep_backup = True
+                for item in os.listdir(self.wiki_dir):
+                    path = os.path.join(self.wiki_dir, item)
+                    shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
+                for item in moved_out:
+                    shutil.move(os.path.join(backup, item), os.path.join(self.wiki_dir, item))
+                keep_backup = False
+                raise
+        finally:
+            shutil.rmtree(staging, ignore_errors=True)
+            if backup and not keep_backup:
+                shutil.rmtree(backup, ignore_errors=True)
 
         self.update_index()
         self._rebuild_search_index()
 
     def delete_snapshot(self, snapshot_id: str):
-        zip_path = os.path.join(self.snapshots_dir, f"{snapshot_id}.zip")
+        zip_path = self._snapshot_zip_path(snapshot_id)
         meta_path = os.path.join(self.snapshots_dir, f"{snapshot_id}.meta.json")
         if not os.path.exists(zip_path):
             raise FileNotFoundError(f"Snapshot {snapshot_id} not found")
@@ -1426,7 +1498,8 @@ class WikiManager:
         resolutions: dict[str, str | dict],
     ) -> dict:
         folder_path = os.path.join(self.wiki_dir, folder)
-        if not os.path.isdir(folder_path):
+        if not _within(self.wiki_dir, folder_path) or os.path.realpath(folder_path) == os.path.realpath(self.wiki_dir) \
+                or not os.path.isdir(folder_path):
             raise FileNotFoundError(f"Folder '{folder}' does not exist")
 
         imported: list[str] = []
@@ -1445,11 +1518,20 @@ class WikiManager:
                     continue
 
                 if isinstance(resolution, dict) and "rename" in resolution:
-                    target_name = resolution["rename"]
+                    # The rename target is client-supplied and was never sanitised
+                    # (only the upload's own filename was): "../x.md" wrote outside
+                    # the wiki. Accept a bare page filename only.
+                    target_name = _safe_page_filename(resolution["rename"])
+                    if target_name is None:
+                        errors[filename] = "Invalid rename target: use a plain name ending in .md"
+                        continue
                 else:
                     target_name = filename
 
                 target_path = os.path.join(folder_path, target_name)
+                if not _within(folder_path, target_path):
+                    errors[filename] = "Invalid target path"
+                    continue
 
                 if isinstance(resolution, dict) and "rename" in resolution and os.path.exists(target_path):
                     errors[filename] = f"Rename target '{target_name}' already exists"

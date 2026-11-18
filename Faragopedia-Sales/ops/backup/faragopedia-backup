@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Nightly Faragopedia backup, run as root on gecko (home server). Pull model:
+# gecko fetches the data from the VPS with a read-only key, so the VPS holds no
+# credential that could reach or delete the backups. Then:
+#   restic (encrypted) on gecko  ->  mirror of the encrypted repo to yeti.
+# Config: /etc/faragopedia-backup.conf (see faragopedia-backup.conf.example).
+# Install and restore: docs/backup.md. Decision: ADR 0012.
+set -euo pipefail
+
+CONF=/etc/faragopedia-backup.conf
+# shellcheck source=/dev/null
+. "$CONF"
+
+BASE=/srv/backup/faragopedia
+STAGING="$BASE/staging"
+export RESTIC_REPOSITORY="$BASE/restic"
+export RESTIC_PASSWORD_FILE="$BASE/restic-pass"
+KEY=/root/.ssh/faragopedia_backup
+KNOWN=/root/.ssh/known_hosts_faragopedia_backup
+SSH="ssh -i $KEY -o UserKnownHostsFile=$KNOWN -o BatchMode=yes -o ConnectTimeout=20 -o IdentitiesOnly=yes"
+
+ping_kuma() { [ -n "${HEALTHCHECK_URL:-}" ] && curl -fsS -m 10 --retry 3 "${HEALTHCHECK_URL}$1" >/dev/null 2>&1 || true; }
+cleanup() { rm -rf "$STAGING"; }
+trap cleanup EXIT
+trap 'ping_kuma "?status=down&msg=failed"' ERR
+
+# 1. Pull. The VPS key is locked to "rrsync -ro <data dir>", so "/" here is
+#    that directory. The plain copy only lives until this script exits; what
+#    stays on disk is the encrypted restic repo.
+install -d -m 700 "$STAGING"
+rsync -a --delete -e "$SSH -p $VPS_PORT" "$VPS_USER@$VPS_HOST:/" "$STAGING/"
+n=$(find "$STAGING" -name '*.md' | wc -l)
+[ "$n" -gt 0 ] || { echo "pulled no pages: refusing to snapshot an empty wiki"; exit 1; }
+
+# 2. Snapshot, apply retention, and read back a sample to catch corruption early.
+cd "$STAGING"
+restic backup . --host faragopedia-vps --tag faragopedia -q
+restic forget --host faragopedia-vps --tag faragopedia \
+  --keep-daily 14 --keep-weekly 8 --keep-monthly 12 --prune -q
+restic check --read-data-subset=10% -q
+
+# 3. Mirror the encrypted repo to yeti (key locked to one folder there). Only
+#    reached when the check above passed, so a broken repo is not copied over
+#    the good mirror.
+rsync -a --delete -e "$SSH" "$RESTIC_REPOSITORY/" "$YETI_USER@$YETI_HOST:"
+
+echo "OK: $n pages, $(restic snapshots --json -q | grep -o '"short_id"' | wc -l) snapshots, mirrored to yeti"
+ping_kuma "?status=up&msg=OK"

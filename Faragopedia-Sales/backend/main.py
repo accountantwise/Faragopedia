@@ -1,3 +1,4 @@
+import hmac
 import os
 from dotenv import load_dotenv
 
@@ -17,12 +18,38 @@ from agent.workspace_manager import (
     get_wiki_dir, get_sources_dir, get_archive_dir, get_snapshots_dir, get_schema_dir,
 )
 
-app = FastAPI()
+def _env_flag(name: str) -> bool:
+    return os.getenv(name, "").strip().lower() in ("1", "true", "yes")
 
+
+# The interactive docs and OpenAPI schema list every route. The middleware below
+# only gates /api/*, so on the external API hostname they were public (2026-11-18).
+# Off unless asked for, e.g. in local development.
+_docs = _env_flag("ENABLE_API_DOCS")
+app = FastAPI(
+    docs_url="/docs" if _docs else None,
+    redoc_url="/redoc" if _docs else None,
+    openapi_url="/openapi.json" if _docs else None,
+)
+
+
+def _cors_origins() -> list[str]:
+    # Production is same-origin (nginx proxies /api, ADR 0010), so CORS only
+    # matters for local dev, where the frontend calls :8300 directly. Unset keeps
+    # that working; set CORS_ALLOWED_ORIGINS to a comma list (or "" for none).
+    raw = os.getenv("CORS_ALLOWED_ORIGINS")
+    if raw is None:
+        return ["*"]
+    return [o.strip() for o in raw.split(",") if o.strip()]
+
+
+# Never allow credentials: with a wildcard origin Starlette echoes the caller's
+# Origin back when cookies are present, which would let any site read the API
+# with a visitor's Cloudflare Access cookie. The frontend sends no credentials.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_cors_origins(),
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -39,9 +66,13 @@ async def external_api_key_middleware(request: Request, call_next):
     request_host = request.headers.get("host", "").split(":")[0]
     api_key = os.getenv("FARAGOPEDIA_API_KEY", "")
 
-    if external_hostname and is_api_route and request_host == external_hostname and api_key:
+    # /api/health stays open so an uptime monitor can call it without the key.
+    is_health = request.url.path == "/api/health"
+
+    if external_hostname and is_api_route and not is_health and request_host == external_hostname and api_key:
         key = request.headers.get("x-api-key", "")
-        if key != api_key:
+        # Constant-time compare, so response timing doesn't leak the key.
+        if not hmac.compare_digest(key.encode(), api_key.encode()):
             return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
 
     return await call_next(request)
@@ -66,6 +97,12 @@ if active_id and is_setup_complete(get_schema_dir()):
         schema_dir=get_schema_dir(),
     )
     set_wiki_manager(wm)
+
+@app.get("/api/health")
+def health():
+    # Liveness only: says nothing about the data, so it is safe to leave ungated.
+    return {"status": "ok"}
+
 
 @app.get("/")
 def read_root():
