@@ -57,9 +57,12 @@ production and security fixes. By 2026-11-18 only the same-origin `/api` proxy
 - **Dependencies:** `requirements.txt` pinned to the versions tested on
   Python 3.11 and 3.12. Dependabot (pip, npm, docker, actions) proposes
   upgrades. Node 22 in CI and in `Dockerfile.prod`.
-- **Backups:** restic, nightly, from the VPS to off-site storage. Keeps 14
-  daily, 8 weekly and 12 monthly snapshots, and reads back 5% of the data on
-  each run. Files and runbook: `ops/backup/`, `docs/backup.md`.
+- **Backups (no paid service):** gecko (home server) pulls the data nightly
+  over SSH with a key the VPS locks to `rrsync -ro <data dir>`. gecko stores
+  it in an encrypted restic repository (14 daily, 8 weekly, 12 monthly;
+  10% read-back check each run), then mirrors that repo to yeti, with a key
+  locked to one folder there. Files and runbook: `ops/backup/`,
+  `docs/backup.md`.
 
 ## Consequences
 
@@ -76,8 +79,11 @@ production and security fixes. By 2026-11-18 only the same-origin `/api` proxy
 - Pinned versions need Dependabot PRs merged now and then.
 - The CSP hash in `security-headers.conf` must be recomputed if the inline
   theme script in `index.html` changes (`docs/deployment.md`).
-- The backup destination costs a little and holds client personal data, so
-  it must be in the UK/EU and its credentials kept with the other VPS secrets.
+- Both backup copies are in one house (gecko and yeti); a site disaster
+  there leaves only the live VPS. gecko must be on for backups to run (the
+  timer catches up after downtime).
+- The restic password is the only way to read the backups; it is kept in
+  Vaultwarden as well as on gecko.
 
 ## Alternatives Considered
 
@@ -89,3 +95,9 @@ production and security fixes. By 2026-11-18 only the same-origin `/api` proxy
   Cloudflare-injected scripts. Report-Only first is the standard rollout.
 - **Relying on in-app snapshots for backup:** they live on the same disk and
   are cleared by a full backup import.
+- **VPS pushes to cloud storage (Backblaze B2, Hetzner, OVH Object
+  Storage):** a separate site, but paid (or a free tier with an account to
+  manage), and the VPS would hold credentials able to delete the backups.
+  Kept as the upgrade path for a second, off-site copy.
+- **VPS pushes to gecko over Tailscale:** puts the internet-facing VPS on the
+  home tailnet, and still gives it write access to the backups.

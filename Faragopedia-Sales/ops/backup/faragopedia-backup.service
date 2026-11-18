@@ -1,11 +1,10 @@
 [Unit]
-Description=Faragopedia off-site backup (restic)
+Description=Faragopedia backup: pull from VPS, restic, mirror to yeti
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
-EnvironmentFile=/etc/faragopedia-backup.env
-ExecStart=/usr/local/bin/faragopedia-backup.sh
+ExecStart=/usr/local/sbin/faragopedia-backup
 Nice=10
 IOSchedulingClass=idle

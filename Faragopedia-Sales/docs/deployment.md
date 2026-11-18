@@ -183,8 +183,10 @@ response's `GitConfig.ConfigHash` should match the branch's latest commit.
   to `Content-Security-Policy`. If the inline theme script in `index.html`
   changes, recompute its hash from `dist/index.html` after `npm run build`
   (sha256 of the script body, base64) and update the header.
-- **Backups:** nightly restic to off-site storage. Install and restore steps:
-  [`backup.md`](backup.md).
+- **Backups:** gecko pulls the data nightly (read-only key on the VPS:
+  `gecko-root-faragopedia-backup` in `~ubuntu/.ssh/authorized_keys`, locked
+  to `rrsync -ro`), keeps an encrypted restic repo and mirrors it to yeti.
+  Don't remove that key. Install and restore: [`backup.md`](backup.md).
 
 ### Data
 
