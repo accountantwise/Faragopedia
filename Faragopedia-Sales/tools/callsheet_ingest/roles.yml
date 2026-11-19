@@ -147,6 +147,11 @@ roles:
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
     # corpus, and an assistant rather than a producer).
+    # NOT (decided 2026-11-19, 2024 backfill): agency-side producers and project managers
+    # printed "PRODUCER: NAME @ AGENCY" under a photographer's, stylist's or artist's block,
+    # e.g. "PRODUCER (for Tim Walker, Photographer)". They are the rep's booking staff, and
+    # the agent row already covers the booking route. They stay `other` (hidden).
+    # Show staff (PR lists, dressers, FOH/BTS access, show caller) also stay `other`.
 
   casting_director:
     wiki_keep: true
