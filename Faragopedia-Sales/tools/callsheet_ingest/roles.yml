@@ -70,7 +70,7 @@
 roles:
   photographer:
     wiki_keep: true
-    aliases: [Photographer, Photographers, Lead Photographer]
+    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer]
     # Deliberately NOT aliases: Photo Assistant, Social Photographer,
     # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
     # High string similarity, different person.
@@ -131,6 +131,13 @@ roles:
       - Production Manager
       - Production Coordinator
       - Producer, Farago Projects
+      # 2024 backfill batch 1 (2026-11-19): producer and coordinator variants under the production heading (jobs 435, 438, 439, 440)
+      - On Set Producer
+      - Line Producer
+      - Local Producer
+      - Local Line Producer
+      - Production Coordinators
+      - Production Co-ordinator
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -152,14 +159,14 @@ roles:
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Groomer, Manicurist, Nail Artist]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist]
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
 
   art_director:
     # CONFIRMED by Simon 2026-08-31, having been absent from the brief's keep-list:
     # "anything that's a director or important, obviously we want to keep it."
     wiki_keep: true
-    aliases: [Art Director, Head of Art Direction, Art Direction]
+    aliases: [Art Director, Art Directors, Senior Art Director, Head of Art Direction, Art Direction]
     # NOT: Art Direction Assistant, Art Director Assistant, Art Director Agent.
 
   agent:
@@ -228,6 +235,17 @@ roles:
       - Runner
       - Driver
       - Security
+      # 2024 backfill batch 1 (2026-11-19): not shown; classified so they leave the `other` report
+      - Drivers
+      - Minibus Driver
+      - ATV Drivers
+      - Key Grip
+      - Set Builder
+      - Set Builders
+      - Tailor
+      - Seamstress
+      - Sound Recordist
+      - Steadicam Operator
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -265,6 +283,11 @@ roles:
       - DIT
       - Location Manager
       - Art Buyer
+      # 2024 backfill batch 1 (2026-11-19): not shown; classified so they leave the `other` report
+      - DP
+      - Locations Manager
+      - 1st Assistant Director
+      - Local Set Designer
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
