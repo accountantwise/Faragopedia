@@ -147,11 +147,14 @@ roles:
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
     # corpus, and an assistant rather than a producer).
-    # NOT (decided 2026-11-19, 2024 backfill): agency-side producers and project managers
-    # printed "PRODUCER: NAME @ AGENCY" under a photographer's, stylist's or artist's block,
-    # e.g. "PRODUCER (for Tim Walker, Photographer)". They are the rep's booking staff, and
-    # the agent row already covers the booking route. They stay `other` (hidden).
-    # Show staff (PR lists, dressers, FOH/BTS access, show caller) also stay `other`.
+    # Agency-side producers and project managers ("PRODUCER (for Tim Walker, Photographer)",
+    # printed under an artist's block as "PRODUCER: NAME @ AGENCY") resolve here too, by
+    # the `(for …)` pattern below. Nick, 2026-11-19: show them everywhere, matching the
+    # 2026 pages (Clarabelle Tan, Isabelle Churchill). The company column carries their
+    # agency and the role text keeps who they produce for, so the page never presents
+    # them as Farago's producer.
+    # NOT: show staff (PR lists, dressers, FOH/BTS access, show caller) stay `other`.
+    # NOT: talent-side MANAGER / MANAGEMENT / PUBLICIST (for …) rows stay `other`.
 
   casting_director:
     wiki_keep: true
@@ -398,6 +401,15 @@ roles:
 # if a shape needs carve-outs, it belongs in `aliases` instead.
 # ---------------------------------------------------------------------------------
 patterns:
+  - shape: '(?i)^((senior|executive|senior\s+agency)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s'
+    canonical: production_lead
+    note: >
+      An agency producer named against the artist they produce for: "PRODUCER (for Claire
+      Grech, Hair Stylist)", "PRODUCER: ISABELLE CHURCHILL @ STREETERS (for …)". Anchored
+      on the leading word, so the principal's own role inside the brackets never decides
+      it, and listed first so "(for X, Photo Assistant)" cannot fall to the assistant
+      shape. Chaperone, parent and c/o rows never start with these words.
+
   - shape: '(?i)(?<![a-z])(assistants?|asst\.?s?)(?![a-z])'
     canonical: assistant
     note: >
