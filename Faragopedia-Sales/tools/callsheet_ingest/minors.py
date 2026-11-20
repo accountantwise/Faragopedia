@@ -16,6 +16,8 @@ Who counts as a child is decided from the callsheet, because callsheets never gi
   and every CHAPERONE: chaperones are often parents, and the row usually names the child;
 - talent a chaperone row says it is "for": a chaperone means a minor, even on an adult job
   booked through an adult agency;
+- every talent row on a job with a chaperone in any wording ("TALENT CHAPERONE",
+  "MODEL'S CHAPERONE (Sam)"), even when the row does not say who it is for;
 - once any child is found on a job, every other talent row on that job too. Callsheets
   give no ages, and a child can appear with no signal at all (a first name in a call-time
   line, a "FRIEND" booked direct), so one confirmed child is treated as a children's cast.
@@ -84,6 +86,19 @@ def chaperoned(days) -> set[str]:
                 for m in CHAPERONE_FOR.finditer(text or ""):
                     out.add(_key(m.group(1)))
     return out - {""}
+
+
+def has_chaperone(days) -> bool:
+    """True when any row on the job, filtered or not, is a chaperone in any wording:
+    "TALENT CHAPERONE", "MODEL'S CHAPERONE (Sam)", "Chaperone" in the company cell.
+    Nick, 2026-11-19: a chaperone means a child is on the job, named or not, so every
+    talent row is withheld. A chaperone that says who it is for is also caught by
+    chaperoned(); this catches the ones that don't."""
+    for d in days:
+        for p in d.sheet.people + list(d.people):
+            if re.search(r"\bchaperones?\b", f"{p.role_raw or ''} {p.company or ''}", re.I):
+                return True
+    return False
 
 
 def why_withheld(p, kids_job: bool, chaperoned_keys: set[str] = frozenset()) -> str | None:
@@ -159,7 +174,7 @@ def withhold_minors(days) -> Withheld:
     chap = chaperoned(days)
     seen: set[str] = set()
     # One confirmed child makes every talent row on the job a possible child (see module doc).
-    children_on_job = kids_job or any(
+    children_on_job = kids_job or has_chaperone(days) or any(
         why_withheld(p, kids_job, chap) == "child" for d in days for p in d.people)
     for d in days:
         kept = []

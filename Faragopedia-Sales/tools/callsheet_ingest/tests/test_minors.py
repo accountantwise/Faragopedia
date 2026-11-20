@@ -142,3 +142,26 @@ def test_kept_row_that_names_a_withheld_child_is_withheld():
     days = [day([kid, tutor, crew], campaign="Example Band Music Video")]
     withhold_minors(days)
     assert days[0].people == [crew]
+
+
+def test_unattributed_chaperone_withholds_all_talent():
+    # "TALENT CHAPERONE" or "MODEL'S CHAPERONE (Firstname)" names no principal with "for",
+    # but a chaperone on the job still means a child is on it (Nick, 2026-11-19).
+    crew = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
+    model = person(name="Adult Looking", role_raw="MODEL", company="Example Models")
+    for chap_role in ("TALENT CHAPERONE", "MODEL'S CHAPERONE (Firstname)"):
+        chap = person(canonical="other", name="Chap Person", role_raw=chap_role)
+        d = day([crew, model], campaign="Brand Holiday Campaign")
+        d.sheet.people.extend([crew, model, chap])
+        w = withhold_minors([d])
+        assert d.people == [crew], chap_role
+        assert "adult looking" in w.children
+
+
+def test_job_with_no_chaperone_keeps_adult_talent():
+    crew = person(canonical="photographer", name="Pat Lens", role_raw="PHOTOGRAPHER")
+    model = person(name="Adult Model", role_raw="MODEL", company="Example Models")
+    d = day([crew, model], campaign="Brand Holiday Campaign")
+    d.sheet.people.extend([crew, model])
+    withhold_minors([d])
+    assert d.people == [crew, model]

@@ -143,6 +143,13 @@ roles:
       - Prod. Manager, Farago
       - Production Coord.
       - Producer Manager
+      # 2024 batch 3: stills and photographer-side producers, and a misprint (jobs 405, 412, 415)
+      - Exeuctive Producer
+      - "Photographer's Producer"
+      - Stills Producer
+      - Stills Production
+      - Still Production
+      - Stills Production Coordinator
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -158,21 +165,25 @@ roles:
 
   casting_director:
     wiki_keep: true
-    aliases: [Casting Director]
+    aliases: [Casting Director, Casting]
+    # 2024 batch 3 (job 415): Casting
 
   stylist_lead:
     wiki_keep: true
-    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor]
+    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor, Stills Stylist]
+    # 2024 batch 3 (job 415): Stills Stylist
     # NOT: Styling Assistant, Stylist Assistant, Junior Fashion Editor.
 
   hair_lead:
     wiki_keep: true
-    aliases: [Hair Stylist, Hair Artist, Hair]
+    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist]
+    # 2024 batch 3 (jobs 412, 415): Lead Hair, Lead Hair Stylist, Stills Hair Stylist
     # NOT: Hair Assistant.
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist]
+    # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
 
   art_director:
@@ -274,6 +285,42 @@ roles:
       - Camera Trainee
       - Dresser
       - Generator Engineer
+      # 2024 batch 3 (jobs 404-415): hidden either way, aliased to quiet the report
+      - Runners
+      - Electrician
+      - "Electrician /Desk Op"
+      - Unit Driver
+      - Wardrobe Driver
+      - Camera Truck Driver
+      - Styling Van Driver
+      - Driver VIP
+      - Generator Operator
+      - Genny Operator (Day 1)
+      - Genny Operator (Day 2)
+      - Spark (Day 1)
+      - Spark (Day 2)
+      - Spark TD (Day 1)
+      - Spark TD (Day 2)
+      - VTR
+      - Video Playback
+      - SFX
+      - SFX Supervisor
+      - Snow SFX Supervisor
+      - Snow SFX Technician
+      - VFX Supervisor
+      - Sound Operator
+      - Lighting Technician
+      - Cam Op
+      - 2nd Grip
+      - Supervising Rigger
+      - Props
+      - Construction
+      - Set Dresser
+      - Digital Tech
+      - Videographer
+      - Seamstresses
+      - Motorhome
+      - White Gloves
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -316,6 +363,11 @@ roles:
       - Locations Manager
       - 1st Assistant Director
       - Local Set Designer
+      # 2024 batch 3 (jobs 405, 407, 415): hidden either way, aliased to quiet the report
+      - Production Designer
+      - Set Design
+      - Stills Set Designer
+      - Unit Manager
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
@@ -360,6 +412,9 @@ roles:
       - Stand In
       - Stand-In
       - Standin
+      # 2024 batch 3 (job 415)
+      - Stand-In Model
+      - Stand In Model
 
   talent:
     wiki_keep: true
@@ -386,7 +441,8 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model]
+    # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
@@ -401,7 +457,7 @@ roles:
 # if a shape needs carve-outs, it belongs in `aliases` instead.
 # ---------------------------------------------------------------------------------
 patterns:
-  - shape: '(?i)^((senior|executive|senior\s+agency)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s'
+  - shape: '(?i)^((senior|executive|senior\s+agency)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
     canonical: production_lead
     note: >
       An agency producer named against the artist they produce for: "PRODUCER (for Claire
