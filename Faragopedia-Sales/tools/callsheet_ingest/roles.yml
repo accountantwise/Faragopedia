@@ -70,7 +70,8 @@
 roles:
   photographer:
     wiki_keep: true
-    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer]
+    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer, Still Life Photographer]
+    # 2024 batch 4 (job 395): Still Life Photographer
     # Deliberately NOT aliases: Photo Assistant, Social Photographer,
     # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
     # High string similarity, different person.
@@ -150,6 +151,10 @@ roles:
       - Stills Production
       - Still Production
       - Stills Production Coordinator
+      # 2024 batch 4: department production managers under the Farago heading, and an agency associate producer (jobs 398, 402)
+      - Stills Production Manager
+      - Video Production Manager
+      - Associate Producer
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -176,14 +181,16 @@ roles:
 
   hair_lead:
     wiki_keep: true
-    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist]
+    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist, Model Hair, R.F. Hair]
     # 2024 batch 3 (jobs 412, 415): Lead Hair, Lead Hair Stylist, Stills Hair Stylist
+    # 2024 batch 4 (job 393): Model Hair, and R.F. Hair (the hair stylist for the talent "R.F.")
     # NOT: Hair Assistant.
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure]
     # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
+    # 2024 batch 4 (jobs 393, 400): Model Makeup, R.F. Makeup, Manicure
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
 
   art_director:
@@ -285,6 +292,30 @@ roles:
       - Camera Trainee
       - Dresser
       - Generator Engineer
+      # 2024 batch 4 (jobs 393-403): hidden either way, aliased to quiet the report
+      - Production Drivers
+      - Motorhome Driver
+      - Motorhome Drivers
+      - Trailer Driver
+      - Stills Driver
+      - Lighting Driver
+      - Genie Engineer
+      - Genie Op
+      - Security Guards
+      - Guard
+      - Tailors
+      - Lighting Tech
+      - Digi Op
+      - Film Loader
+      - B-Roll
+      - BTS Photographer
+      - BTS Motion
+      - Polaroid Photographer
+      - Desk Operator
+      - Moco Operator
+      - Prosthetics Designer
+      - Writer
+      - Location Contact
       # 2024 batch 3 (jobs 404-415): hidden either way, aliased to quiet the report
       - Runners
       - Electrician
@@ -441,8 +472,9 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
+    # 2024 batch 4 (job 393): Fit Models, Fit Model
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
@@ -457,7 +489,7 @@ roles:
 # if a shape needs carve-outs, it belongs in `aliases` instead.
 # ---------------------------------------------------------------------------------
 patterns:
-  - shape: '(?i)^((senior|executive|senior\s+agency)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
+  - shape: '(?i)^((senior|executive|senior\s+agency|agency|lead|associate)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
     canonical: production_lead
     note: >
       An agency producer named against the artist they produce for: "PRODUCER (for Claire
