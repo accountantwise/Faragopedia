@@ -70,7 +70,7 @@
 roles:
   photographer:
     wiki_keep: true
-    aliases: [Photographer, Photographers, Lead Photographer]
+    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer]
     # Deliberately NOT aliases: Photo Assistant, Social Photographer,
     # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
     # High string similarity, different person.
@@ -131,10 +131,27 @@ roles:
       - Production Manager
       - Production Coordinator
       - Producer, Farago Projects
+      # 2024 backfill batch 1 (2026-11-19): producer and coordinator variants under the production heading (jobs 435, 438, 439, 440)
+      - On Set Producer
+      - Line Producer
+      - Local Producer
+      - Local Line Producer
+      - Production Coordinators
+      - Production Co-ordinator
+      # 2024 batch 2: abbreviations and a misprint under the Farago production heading (jobs 421, 424)
+      - Prod. Manager
+      - Prod. Manager, Farago
+      - Production Coord.
+      - Producer Manager
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
     # corpus, and an assistant rather than a producer).
+    # NOT (decided 2026-11-19, 2024 backfill): agency-side producers and project managers
+    # printed "PRODUCER: NAME @ AGENCY" under a photographer's, stylist's or artist's block,
+    # e.g. "PRODUCER (for Tim Walker, Photographer)". They are the rep's booking staff, and
+    # the agent row already covers the booking route. They stay `other` (hidden).
+    # Show staff (PR lists, dressers, FOH/BTS access, show caller) also stay `other`.
 
   casting_director:
     wiki_keep: true
@@ -142,24 +159,24 @@ roles:
 
   stylist_lead:
     wiki_keep: true
-    aliases: [Stylist, Head of Styling, Fashion Editor, Womenswear Editor]
+    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor]
     # NOT: Styling Assistant, Stylist Assistant, Junior Fashion Editor.
 
   hair_lead:
     wiki_keep: true
-    aliases: [Hair Stylist, Hair]
+    aliases: [Hair Stylist, Hair Artist, Hair]
     # NOT: Hair Assistant.
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Groomer, Manicurist, Nail Artist]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist]
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
 
   art_director:
     # CONFIRMED by Simon 2026-08-31, having been absent from the brief's keep-list:
     # "anything that's a director or important, obviously we want to keep it."
     wiki_keep: true
-    aliases: [Art Director, Head of Art Direction, Art Direction]
+    aliases: [Art Director, Art Directors, Senior Art Director, Head of Art Direction, Art Direction]
     # NOT: Art Direction Assistant, Art Director Assistant, Art Director Agent.
 
   agent:
@@ -228,6 +245,32 @@ roles:
       - Runner
       - Driver
       - Security
+      # 2024 backfill batch 1 (2026-11-19): not shown; classified so they leave the `other` report
+      - Drivers
+      - Minibus Driver
+      - ATV Drivers
+      - Key Grip
+      - Set Builder
+      - Set Builders
+      - Tailor
+      - Seamstress
+      - Sound Recordist
+      - Steadicam Operator
+      # 2024 batch 2
+      - Steadicam
+      - Electric
+      - BB Grip
+      - BBE
+      - Boom Op
+      - Sound Mixer
+      - Sound Op
+      - Desk Op
+      - Builder
+      - Builders
+      - Loader
+      - Camera Trainee
+      - Dresser
+      - Generator Engineer
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -265,6 +308,11 @@ roles:
       - DIT
       - Location Manager
       - Art Buyer
+      # 2024 backfill batch 1 (2026-11-19): not shown; classified so they leave the `other` report
+      - DP
+      - Locations Manager
+      - 1st Assistant Director
+      - Local Set Designer
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
