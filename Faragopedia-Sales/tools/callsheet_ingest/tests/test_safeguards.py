@@ -144,6 +144,20 @@ def test_person_named_companies_from_the_incident_are_quarantined():
     assert q.company_problems("Matière Noire", person_keys=people, row_person="Remy Sample", roles=ROLES) == []
 
 
+def test_company_relationship_and_mid_string_care_of_are_held():
+    # 2024 backfill batch 1: each of these became a junk company page.
+    for raw in ["Streeters (producer for Gary Gill, Hair Stylist)",
+                "MA WORLD GROUP, producer for DANIEL SALLSTROM (Makeup Artist)",
+                "Carol Hayes Management representative for Carlos Ferraz (Groomer)",
+                "talent team of Yang Mi (Talent)",
+                "British Vogue c/o Madison McTaggart",
+                "Imprint PR (c/o Dominque Appel)"]:
+        assert q.company_problems(raw, person_keys=set(), row_person="x", roles=ROLES), raw
+    for ok in ["Streeters", "Art + Commerce", "MA World Group", "Team Talent Ltd", "The Agency",
+               "Production Managers Ltd", "Lock Studios"]:
+        assert q.company_problems(ok, person_keys=set(), row_person="x", roles=ROLES) == [], ok
+
+
 # --------------------------------------------------------------- postprocess
 
 PAGE = """# Y-3 FW25

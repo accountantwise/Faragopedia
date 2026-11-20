@@ -100,10 +100,21 @@ def company_problems(name: str, *, person_keys: set[str], row_person: str, roles
         problems.append("a Farago office: map it to the existing farago-projects* page with --aliases")
     if CARE_OF.match(raw):
         problems.append("a 'c/o' contact route, not a company (it can name a parent): map it with --aliases")
+    elif CARE_OF_ANYWHERE.search(raw):
+        problems.append("contains a 'c/o' contact route (it can name a parent): put only the company in the column")
+    if RELATIONSHIP.search(raw):
+        problems.append("describes a person's relationship ('producer for …', 'team of …'), not a company")
     return problems
 
 
 CARE_OF = re.compile(r"^\s*c/o\b", re.I)
+CARE_OF_ANYWHERE = re.compile(r"(?<![\w/])c/o\b", re.I)
+# "Streeters (producer for Gary Gill)", "Carol Hayes Management representative for X",
+# "talent team of Yang Mi": the extract put a person's relationship in the company column.
+# Seen in the 2024 backfill batch 1, where 13 such pages were created.
+RELATIONSHIP = re.compile(
+    r"\b(producers?|representatives?|reps?|agents?|managers?|assistants?|agency)\s+(for|of|to)\b"
+    r"|\bteam\s+of\b", re.I)
 
 
 def care_of_company(raw: str) -> str:
