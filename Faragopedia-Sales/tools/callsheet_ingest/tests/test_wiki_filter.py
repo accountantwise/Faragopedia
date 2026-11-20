@@ -426,3 +426,20 @@ job_reference_number: 1
     path = tmp_path / "empty.md"
     path.write_text(text, encoding="utf-8")
     assert parse_callsheet(path) is None
+
+
+def test_agency_producer_for_an_artist_resolves_to_production_lead():
+    vocab = RoleVocabulary.load()
+    for raw in ["PRODUCER (for Claire Grech, Hair Stylist)",
+                "PRODUCER (for Claire Grech)",
+                "Senior Producer (for Tim Walker, Photographer)",
+                "SENIOR AGENCY PRODUCER (for X, Set Designer)",
+                "EXECUTIVE PRODUCER (for X, Director)",
+                "PROJECT MANAGER (for X, Stylist)",
+                "PRODUCER: ISABELLE CHURCHILL @ STREETERS (for JABEZ BARTLETT, SET DESIGNER)",
+                "PRODUCER (for X, Photo Assistant)"]:
+        assert vocab.resolve(raw) == "production_lead", raw
+    # Talent-side and child-side relationship rows are untouched by the shape.
+    for raw in ["CHAPERONE (for X, Model)", "MANAGER (for X, Talent)",
+                "PUBLICIST (for X, Talent)", "C/O (for X)", "Production Assistant"]:
+        assert vocab.resolve(raw) != "production_lead", raw
