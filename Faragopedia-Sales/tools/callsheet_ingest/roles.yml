@@ -155,6 +155,9 @@ roles:
       - Stills Production Manager
       - Video Production Manager
       - Associate Producer
+      # 2024 batch 5: production-partner execs, printed with one or two spaces (job 389)
+      - Executive Producer / Partner
+      - "Executive  Producer / Partner"
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -170,8 +173,9 @@ roles:
 
   casting_director:
     wiki_keep: true
-    aliases: [Casting Director, Casting]
+    aliases: [Casting Director, Casting, Casting Direction]
     # 2024 batch 3 (job 415): Casting
+    # 2024 batch 5 (job 385): Casting Direction
 
   stylist_lead:
     wiki_keep: true
@@ -472,9 +476,10 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
+    # 2024 batch 5 (job 381): Models
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
