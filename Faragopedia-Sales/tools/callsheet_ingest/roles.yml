@@ -70,7 +70,7 @@
 roles:
   photographer:
     wiki_keep: true
-    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer, Still Life Photographer]
+    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer, Still Life Photographer, Runway Photographer, Backstage Photographer]
     # 2024 batch 4 (job 395): Still Life Photographer
     # Deliberately NOT aliases: Photo Assistant, Social Photographer,
     # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
@@ -158,6 +158,9 @@ roles:
       # 2024 batch 5: production-partner execs, printed with one or two spaces (job 389)
       - Executive Producer / Partner
       - "Executive  Producer / Partner"
+      # 2024 batch 6: plural managers and a Farago project manager (jobs 372, 378)
+      - Production Managers
+      - Project Manager
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -173,13 +176,13 @@ roles:
 
   casting_director:
     wiki_keep: true
-    aliases: [Casting Director, Casting, Casting Direction]
+    aliases: [Casting Director, Casting, Casting Direction, Casting Director Team]
     # 2024 batch 3 (job 415): Casting
     # 2024 batch 5 (job 385): Casting Direction
 
   stylist_lead:
     wiki_keep: true
-    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor, Stills Stylist]
+    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor, Stills Stylist, Senior Style Editor and Stylist]
     # 2024 batch 3 (job 415): Stills Stylist
     # NOT: Styling Assistant, Stylist Assistant, Junior Fashion Editor.
 
@@ -356,6 +359,23 @@ roles:
       - Seamstresses
       - Motorhome
       - White Gloves
+      # 2024 batch 6 (jobs 367, 368, 369, 372, 377): hidden technical bench
+      - Videographers
+      - BTS Videographer
+      - BTS Videoographer
+      - Backstage Videographer
+      - Cinematographer
+      - Camera Operator
+      - Lighting
+      - Sound
+      - Scissor Lift Op
+      - Stage Hands
+      - Power
+      - Programmer
+      - Animal Wranglers
+      - Retoucher
+      - Social DP
+      - Social Photographer
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -403,6 +423,9 @@ roles:
       - Set Design
       - Stills Set Designer
       - Unit Manager
+      # 2024 batch 6 (jobs 372, 377)
+      - Key Gaffer
+      - Senior Technical Project Managers
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
@@ -414,6 +437,10 @@ roles:
       - 2nd AD
       - 2nd AC
       - 3rd AD
+      # 2024 batch 6: misprints and a short form (jobs 367, 369)
+      - Production Assitant
+      - Production Assitant for Set-Up
+      - Photo Assist
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
@@ -476,7 +503,7 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting)]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
     # 2024 batch 5 (job 381): Models
@@ -494,7 +521,7 @@ roles:
 # if a shape needs carve-outs, it belongs in `aliases` instead.
 # ---------------------------------------------------------------------------------
 patterns:
-  - shape: '(?i)^((senior|executive|senior\s+agency|agency|lead|associate)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
+  - shape: '(?i)^((senior|executive|exec|senior\s+agency|agency|lead|associate)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
     canonical: production_lead
     note: >
       An agency producer named against the artist they produce for: "PRODUCER (for Claire
