@@ -70,7 +70,7 @@
 roles:
   photographer:
     wiki_keep: true
-    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer, Still Life Photographer, Runway Photographer, Backstage Photographer]
+    aliases: [Photographer, Photographers, Lead Photographer, Lookbook Photographer, Still Life Photographer, Runway Photographer, Backstage Photographer, Secondary Photographer, Product Photographer]
     # 2024 batch 4 (job 395): Still Life Photographer
     # Deliberately NOT aliases: Photo Assistant, Social Photographer,
     # Backstage Photographer, Lookbook Photographer, Producer (Photographer).
@@ -161,6 +161,12 @@ roles:
       # 2024 batch 6: plural managers and a Farago project manager (jobs 372, 378)
       - Production Managers
       - Project Manager
+      # 2024 batch 7: plurals, local production staff and a fixer (jobs 300, 316, 327, 347, 357)
+      - Producers
+      - Exec. Producer
+      - Local Production Manager
+      - Local Coordinator
+      - Line Producer/Fixer
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -176,7 +182,7 @@ roles:
 
   casting_director:
     wiki_keep: true
-    aliases: [Casting Director, Casting, Casting Direction, Casting Director Team]
+    aliases: [Casting Director, Casting, Casting Direction, Casting Director Team, Casting Directors, Street Casting]
     # 2024 batch 3 (job 415): Casting
     # 2024 batch 5 (job 385): Casting Direction
 
@@ -188,14 +194,14 @@ roles:
 
   hair_lead:
     wiki_keep: true
-    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist, Model Hair, R.F. Hair]
+    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist, Model Hair, R.F. Hair, Hairstylist]
     # 2024 batch 3 (jobs 412, 415): Lead Hair, Lead Hair Stylist, Stills Hair Stylist
     # 2024 batch 4 (job 393): Model Hair, and R.F. Hair (the hair stylist for the talent "R.F.")
     # NOT: Hair Assistant.
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair]
     # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
     # 2024 batch 4 (jobs 393, 400): Model Makeup, R.F. Makeup, Manicure
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
@@ -376,6 +382,29 @@ roles:
       - Retoucher
       - Social DP
       - Social Photographer
+      # 2024 batch 7 (jobs 300, 316, 327, 333, 347, 363): hidden technical bench and drivers
+      - Focus Puller
+      - Video Assist
+      - Propman
+      - Seamtress
+      - Seamstress
+      - Fittings Seamstress Sunday Only
+      - Grip/Standbys
+      - Stunts
+      - Breakdown Artist
+      - Floor Runner
+      - Tracking Vehicle Driver
+      - EQ Van Driver
+      - Van Driver
+      - Production Driver
+      - "Transport: Head Minibus Driver"
+      - Runner / Driver
+      - Art Department & Props
+      - Digital Operator
+      - Socials Videographer
+      - Crew
+      - Crew/Driver
+      - Crew Boss
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -426,6 +455,9 @@ roles:
       # 2024 batch 6 (jobs 372, 377)
       - Key Gaffer
       - Senior Technical Project Managers
+      # 2024 batch 7 (jobs 300, 327)
+      - Stunt Coordinator
+      - Free Running & Stunt Coordinator
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
@@ -441,6 +473,10 @@ roles:
       - Production Assitant
       - Production Assitant for Set-Up
       - Photo Assist
+      # 2024 batch 7 (job 316)
+      - P.A.
+      - Office Manager / P.A.
+      - 1st Lighting Assitant
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
@@ -503,7 +539,7 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting)]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
     # 2024 batch 5 (job 381): Models
@@ -547,6 +583,16 @@ patterns:
     canonical: assistant
     note: >
       Numbered deputies. 1st AD/AC are kept as crew; seconds and thirds are not.
+
+  - shape: '(?i)^stand[\s-]?in\b'
+    canonical: stand_in
+    note: >
+      Stand-ins named for the talent they stand in for ("Stand In Bellingham", "Stand In
+      JB"). Hidden like every stand-in. Added in 2024 batch 7 (job 316).
+
+  - shape: '(?i)^runner\s*/\s*driver\b'
+    canonical: crew
+    note: Runner/driver rows with a van or day suffix ("Runner / Driver Van FARAGO"). Hidden. 2024 batch 7.
 
   - shape: '(?i)(?<![a-z])agent(?![a-z])'
     canonical: agent
