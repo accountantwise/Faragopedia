@@ -165,3 +165,21 @@ def test_job_with_no_chaperone_keeps_adult_talent():
     d.sheet.people.extend([crew, model])
     withhold_minors([d])
     assert d.people == [crew, model]
+
+
+def test_agency_named_parent_is_not_a_parent():
+    # "LEAD PRODUCER: NAME @ PARENT": Parent is an artist agency (job 393, Nick 2026-11-21).
+    producer = person(canonical="production_lead", name="Pat Producer",
+                      role_raw="LEAD PRODUCER (for Dee Rector, Director)", company="Parent")
+    model = person(name="Adult Model", role_raw="MODEL", company="Example Models")
+    d = day([producer, model])
+    w = withhold_minors([d])
+    assert d.people == [producer, model]
+    assert not w
+
+
+def test_parent_words_still_withheld_beside_the_agency_exception():
+    assert why_withheld(person(canonical="other", name="A", role_raw="PARENT", company="Parent"), False) == "parent"
+    assert why_withheld(person(canonical="other", name="B", role_raw="CONTACT", company="Parent of Testchild"), False) == "parent"
+    assert why_withheld(person(canonical="other", name="C", role_raw="CONTACT", company="c/o parent"), False) == "parent"
+    assert why_withheld(person(canonical="other", name="D", role_raw="MOTHER", company="unknown"), False) == "parent"

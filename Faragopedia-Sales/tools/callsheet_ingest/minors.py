@@ -44,6 +44,11 @@ KIDS_AGENCIES = ("bruce and brown", "bruce & brown", "maya inc", "bizzy", "arwen
 KIDS_WORDS = re.compile(r"\b(kids?|kidz|kidso|kidsa|children|childrens|child|junior|juniors|baby|babies)\b", re.I)
 CHILD_ROLE = re.compile(r"\b(young|child|kid|kids|baby|boy|girl|teen|toddler|infant|junior)\b", re.I)
 PARENT_ROLE = re.compile(r"\b(mother|father|mum|mom|dad|parent|guardian|chaperone)\b", re.I)
+# Agencies whose whole name is a parent word. "Parent" is a London artist agency
+# (directors, photographers): "LEAD PRODUCER: NAME @ PARENT" is an adult producer, not a
+# child's parent (job 393, Nick 2026-11-21). Exact name only: "Parent of X", "c/o parent"
+# and any parent word in the role are still withheld.
+NOT_PARENT_AGENCIES = ("parent",)
 # "CHAPERONE (for Sam, Model)" in the role, or "Chaperone for Sam (Model)" in the company.
 CHAPERONE_FOR = re.compile(r"chaperone\b[^|]*?\bfor\s+([^,()|;]+)", re.I)
 # Everything after the agency itself in an agent's company cell.
@@ -104,7 +109,9 @@ def has_chaperone(days) -> bool:
 def why_withheld(p, kids_job: bool, chaperoned_keys: set[str] = frozenset()) -> str | None:
     """Why this callsheet row must not reach the wiki, or None to keep it."""
     role = p.role_raw or ""
-    if PARENT_ROLE.search(role) or PARENT_ROLE.search(p.company or ""):
+    company = p.company or ""
+    if PARENT_ROLE.search(role) or (PARENT_ROLE.search(company)
+                                     and _agency_key(company) not in NOT_PARENT_AGENCIES):
         return "parent"
     if not is_talent(p.canonical):
         return None
