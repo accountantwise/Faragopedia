@@ -417,6 +417,24 @@ roles:
       - Production Vehicles
       - Prop Vehicle
       - Duck Wrangler
+      # 2023 batch 2 (jobs 332, 335, 337, 344, 349)
+      - Set Build
+      - Prop
+      - Prop Hand
+      - Props Stylist
+      - Medic
+      - Studio Contact
+      - Studio Producer
+      - Lighting Desk Op
+      - Master Rigger
+      - Drone Operator
+      - Scrip Supervisor
+      - ARRI Trinity Operator
+      - Editor
+      - Entertainer
+      - Motion (Bolex)
+      - BTS (i-D)
+      - Prop Car Owner
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -498,6 +516,10 @@ roles:
       - PA / Driver
       - PA
       - Braider
+      # 2023 batch 2 (jobs 332, 337, 340)
+      - PA'S/DRIVERS
+      - Grip Trainee
+      - Spark Trainee
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
