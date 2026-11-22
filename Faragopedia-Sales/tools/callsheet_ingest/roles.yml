@@ -167,6 +167,9 @@ roles:
       - Local Production Manager
       - Local Coordinator
       - Line Producer/Fixer
+      # 2023 batch 1 (jobs 354, 359)
+      - Line Producers
+      - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
     # NOT: Production Assistant (48 occurrences, the single most common label in the
@@ -201,7 +204,7 @@ roles:
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair, Hair and Makeup Stylist]
     # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
     # 2024 batch 4 (jobs 393, 400): Model Makeup, R.F. Makeup, Manicure
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
@@ -405,6 +408,15 @@ roles:
       - Crew
       - Crew/Driver
       - Crew Boss
+      # 2023 batch 1 (jobs 354, 355, 359, 360)
+      - Script Writer
+      - SFX Technicians
+      - Set Runner
+      - Fire Marshal
+      - Hotel Contact
+      - Production Vehicles
+      - Prop Vehicle
+      - Duck Wrangler
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -458,6 +470,10 @@ roles:
       # 2024 batch 7 (jobs 300, 327)
       - Stunt Coordinator
       - Free Running & Stunt Coordinator
+      # 2023 batch 1 (jobs 354, 355, 360)
+      - Choreographer
+      - Set Studio Manager
+      - Studio Supervisor
 
   assistant:
     # NOT KEPT — the one unambiguous exclusion, stated in both meetings. Everything whose
@@ -477,6 +493,11 @@ roles:
       - P.A.
       - Office Manager / P.A.
       - 1st Lighting Assitant
+      # 2023 batch 1 (jobs 354, 355, 358, 360)
+      - PAs / Drivers
+      - PA / Driver
+      - PA
+      - Braider
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
