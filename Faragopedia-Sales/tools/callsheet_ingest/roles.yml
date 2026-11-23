@@ -169,6 +169,10 @@ roles:
       - Line Producer/Fixer
       # 2023 batch 1 (jobs 354, 359)
       - Line Producers
+      # 2023 batch 4 (jobs 301, 306)
+      - Video Line Producer
+      - PM
+      - Prep Production Coordinator
       - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
@@ -197,16 +201,18 @@ roles:
 
   hair_lead:
     wiki_keep: true
-    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist, Model Hair, R.F. Hair, Hairstylist]
+    aliases: [Hair Stylist, Hair Artist, Hair, Lead Hair, Lead Hair Stylist, Stills Hair Stylist, Model Hair, R.F. Hair, Hairstylist, Campaign Hair, Product Shoot Hair Stylist]
     # 2024 batch 3 (jobs 412, 415): Lead Hair, Lead Hair Stylist, Stills Hair Stylist
     # 2024 batch 4 (job 393): Model Hair, and R.F. Hair (the hair stylist for the talent "R.F.")
+    # 2023 batch 4 (job 306): Campaign Hair, Product Shoot Hair Stylist
     # NOT: Hair Assistant.
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair, Hair and Makeup Stylist]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair, Hair and Makeup Stylist, Campaign & Product Makeup, Campaign & Product Manicurist, Yseult's Campaign Makeup Artist, Naomi's Makeup Artist, Local Manicure]
     # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
     # 2024 batch 4 (jobs 393, 400): Model Makeup, R.F. Makeup, Manicure
+    # 2023 batch 4 (jobs 301, 306): Campaign & Product Makeup, Campaign & Product Manicurist, Yseult's/Naomi's makeup artists, Local Manicure
     # NOT: Makeup Assistant, Groomer Assistant, Nail Artist Assistant.
 
   art_director:
@@ -444,6 +450,35 @@ roles:
       - Dining Bus
       - Clapper / Loader
       - HIIT Instructor
+      # 2023 batch 4 (jobs 301, 302, 306, 308, 310)
+      - "Moho Driver"
+      - "Crew Van 1"
+      - "Crew Van 2"
+      - "Crew Van 3"
+      - "Crew Van 4"
+      - "Photo Equipment Van"
+      - "Unit Van"
+      - "Props Van"
+      - "VIP Car"
+      - "Shuttle Driver (Vito) - YK23 FBZ"
+      - "Shuttle Driver (Splitter) - LK70 DHC"
+      - "Shuttle Driver (Splitter) - LM71 NDG"
+      - "Product Video Driver (Splitter) - WX70 FDM"
+      - "Campaign Video Touchdown Van Driver"
+      - "Splitter - LK70 DHA / LK70 DHC"
+      - "Splitter - WX70 FDM"
+      - "Barista"
+      - "Arlington Road Barista"
+      - "SKN-Lab Retoucher"
+      - "Props Person"
+      - "Souvenir"
+      - "FP Kit Manager"
+      - "2nd Camera Operator"
+      - "Photographer Studio Manager"
+      - "Local DGI T"
+      - "Local DGI Τ"
+      - "Dog Trainer"
+      - "Handler"
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -529,6 +564,8 @@ roles:
       - PA'S/DRIVERS
       - Grip Trainee
       - Spark Trainee
+      # 2023 batch 4 (job 301)
+      - Transportation PA
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
@@ -591,11 +628,12 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7, Hero Talent, Extra]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7, Hero Talent, Extra, Campaign Shoot Talent, Product Shoot Talent, Model 1, Model 2, Model 3, Model 4, Model 5]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
     # 2024 batch 5 (job 381): Models
     # 2023 batch 3 (job 329, On Running athletes): Hero Talent, Extra
+    # 2023 batch 4 (jobs 301, 306): Campaign Shoot Talent, Product Shoot Talent, Model 1-5
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
