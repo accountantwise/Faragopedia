@@ -47,8 +47,9 @@ PARENT_ROLE = re.compile(r"\b(mother|father|mum|mom|dad|parent|guardian|chaperon
 # Agencies whose whole name is a parent word. "Parent" is a London artist agency
 # (directors, photographers): "LEAD PRODUCER: NAME @ PARENT" is an adult producer, not a
 # child's parent (job 393, Nick 2026-11-21). Exact name only: "Parent of X", "c/o parent"
-# and any parent word in the role are still withheld.
-NOT_PARENT_AGENCIES = ("parent",)
+# and any parent word in the role are still withheld. "Parent Global" is the same
+# agency under its later name (job 253, 2022).
+NOT_PARENT_AGENCIES = ("parent", "parentglobal")
 # "CHAPERONE (for Sam, Model)" in the role, or "Chaperone for Sam (Model)" in the company.
 CHAPERONE_FOR = re.compile(r"chaperone\b[^|]*?\bfor\s+([^,()|;]+)", re.I)
 # Everything after the agency itself in an agent's company cell.

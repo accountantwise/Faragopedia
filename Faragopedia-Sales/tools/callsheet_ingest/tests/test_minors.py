@@ -178,6 +178,17 @@ def test_agency_named_parent_is_not_a_parent():
     assert not w
 
 
+def test_agency_parent_global_is_not_a_parent():
+    # "PRODUCER: NAME @ PARENT GLOBAL": the Parent agency's later name (job 253).
+    producer = person(canonical="production_lead", name="Pat Producer",
+                      role_raw="PRODUCER (for Phil Photographer, Photographer)", company="PARENT GLOBAL")
+    model = person(name="Adult Model", role_raw="MODEL", company="Example Models")
+    d = day([producer, model])
+    w = withhold_minors([d])
+    assert d.people == [producer, model]
+    assert not w
+
+
 def test_parent_words_still_withheld_beside_the_agency_exception():
     assert why_withheld(person(canonical="other", name="A", role_raw="PARENT", company="Parent"), False) == "parent"
     assert why_withheld(person(canonical="other", name="B", role_raw="CONTACT", company="Parent of Testchild"), False) == "parent"
