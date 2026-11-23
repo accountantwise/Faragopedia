@@ -180,6 +180,9 @@ roles:
       - Production Manager / Transport
       # 2023 batch 6 (job 282): agency booker row "(for <hair stylist>)"
       - Booking & Production
+      # 2023 batch 7 (job 262, Jamaica local production)
+      - Producer (Jam)
+      - Prod. Co-ordinator
       - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
@@ -217,7 +220,7 @@ roles:
 
   makeup_lead:
     wiki_keep: true
-    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair, Hair and Makeup Stylist, Campaign & Product Makeup, Campaign & Product Manicurist, Yseult's Campaign Makeup Artist, Naomi's Makeup Artist, Local Manicure]
+    aliases: [Makeup Artist, Make-up Artist, Make Up Artist, Hair & Makeup Artist, Groomer, Manicurist, Nail Artist, Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist, Model Makeup, R.F. Makeup, Manicure, HMU Stylist, Make Up & Hair, Hair and Makeup Stylist, Make Up, Campaign & Product Makeup, Campaign & Product Manicurist, Yseult's Campaign Makeup Artist, Naomi's Makeup Artist, Local Manicure]
     # 2024 batch 3 (jobs 411, 412, 415): Hair and Makeup Artist, Lead Makeup, Lead Makeup Artist, Makeup, Stills Makeup Artist
     # 2024 batch 4 (jobs 393, 400): Model Makeup, R.F. Makeup, Manicure
     # 2023 batch 4 (jobs 301, 306): Campaign & Product Makeup, Campaign & Product Manicurist, Yseult's/Naomi's makeup artists, Local Manicure
@@ -522,6 +525,19 @@ roles:
       - Driver Raketa
       - 3D Artist
       - Camera Op
+      # 2023 batch 7 (job 262)
+      - Props Master
+      - Props P.A.
+      - Craft Service Supervisor
+      - "Security #1"
+      - "Security #2"
+      - Client/Agency
+      - Photo Bus
+      - Crew Bus
+      - Talent Bus
+      - Wardrobe Truck
+      - Equipment
+      - "Riggers:"
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -609,6 +625,8 @@ roles:
       - Spark Trainee
       # 2023 batch 4 (job 301)
       - Transportation PA
+      # 2023 batch 7 (job 262)
+      - Styling PA
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
