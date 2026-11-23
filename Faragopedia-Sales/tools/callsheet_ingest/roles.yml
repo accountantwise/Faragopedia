@@ -435,6 +435,15 @@ roles:
       - Motion (Bolex)
       - BTS (i-D)
       - Prop Car Owner
+      # 2023 batch 3 (jobs 313, 319, 321, 328, 329)
+      - Mini Bus Driver
+      - Splitter Driver
+      - Splitter Van Driver
+      - Wardrobe Trailer
+      - Honey Wagon
+      - Dining Bus
+      - Clapper / Loader
+      - HIIT Instructor
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -582,10 +591,11 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7, Hero Talent, Extra]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
     # 2024 batch 5 (job 381): Models
+    # 2023 batch 3 (job 329, On Running athletes): Hero Talent, Extra
 
 # ---------------------------------------------------------------------------------
 # PATTERN RULES — the fallback, for role shapes that recur rather than repeat.
