@@ -173,6 +173,11 @@ roles:
       - Video Line Producer
       - PM
       - Prep Production Coordinator
+      # 2023 batch 5 (jobs 288, 296, 297)
+      - Agency Producer
+      - Partner Films Executive Producer
+      - OF Producer
+      - Production Manager / Transport
       - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
@@ -479,6 +484,35 @@ roles:
       - "Local DGI Τ"
       - "Dog Trainer"
       - "Handler"
+      # 2023 batch 5 (jobs 295, 296, 297)
+      - "Day Security @ South Bank Centre/National Theatre"
+      - "Day Security @ St John's Church"
+      - "Day Security @ Cornwall Road + Doon Street"
+      - "Touchdown Van Driver"
+      - "Vito Driver - YK23 FBZ"
+      - "Vito Shuttle Driver - YK23 FBZ"
+      - "Splitter Driver - LK70 DHC"
+      - "Splitter Driver - MJZ2416"
+      - "Splitter Shuttle Driver - LK70 DHC"
+      - "Splitter Shuttle Driver - MJZ2416"
+      - "Minibus Driver - YS15 VLR"
+      - "Minibus Driver - YN16 UKP"
+      - "Production Luton Driver"
+      - "Prolighting Van Driver"
+      - "Green Kit Van"
+      - "Panalux Truck"
+      - "School Room Trailer Driver"
+      - "SKN-Lab Post Production Manager"
+      - "AR Op"
+      - "Specialist Electrician"
+      - "Lighting Spartan"
+      - "Grip Spartan"
+      - "Genny Op"
+      - "Spark (Stand In for Paul Burns Gaffer)"
+      - "Consultant"
+      - "Bird Wrangler"
+      - "EQ"
+      - "Transporter"
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
