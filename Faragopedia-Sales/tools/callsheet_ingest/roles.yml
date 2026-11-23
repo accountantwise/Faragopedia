@@ -178,6 +178,8 @@ roles:
       - Partner Films Executive Producer
       - OF Producer
       - Production Manager / Transport
+      # 2023 batch 6 (job 282): agency booker row "(for <hair stylist>)"
+      - Booking & Production
       - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
@@ -200,7 +202,8 @@ roles:
 
   stylist_lead:
     wiki_keep: true
-    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor, Stills Stylist, Senior Style Editor and Stylist]
+    aliases: [Stylist, Wardrobe Stylist, Head of Styling, Fashion Editor, Womenswear Editor, Stills Stylist, Senior Style Editor and Stylist, Styling Lead]
+    # 2023 batch 6 (job 281): Styling Lead
     # 2024 batch 3 (job 415): Stills Stylist
     # NOT: Styling Assistant, Stylist Assistant, Junior Fashion Editor.
 
@@ -224,7 +227,8 @@ roles:
     # CONFIRMED by Simon 2026-08-31, having been absent from the brief's keep-list:
     # "anything that's a director or important, obviously we want to keep it."
     wiki_keep: true
-    aliases: [Art Director, Art Directors, Senior Art Director, Head of Art Direction, Art Direction]
+    aliases: [Art Director, Art Directors, Senior Art Director, Head of Art Direction, Art Direction, Associate Art Director, Art Direction Team]
+    # 2023 batch 6 (jobs 275, 277): Associate Art Director, Art Direction Team
     # NOT: Art Direction Assistant, Art Director Assistant, Art Director Agent.
 
   agent:
@@ -513,6 +517,11 @@ roles:
       - "Bird Wrangler"
       - "EQ"
       - "Transporter"
+      # 2023 batch 6 (jobs 277, 281, 282)
+      - Sound Engineer
+      - Driver Raketa
+      - 3D Artist
+      - Camera Op
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
