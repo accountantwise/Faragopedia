@@ -183,6 +183,13 @@ roles:
       # 2023 batch 7 (job 262, Jamaica local production)
       - Producer (Jam)
       - Prod. Co-ordinator
+      # 2022 batch 1 (jobs 242, 245, 250, 253, 254): Farago "PRODUCTION" rows, agency
+      # creative/film producers, Mr+ (Tokyo) local production relabelled PRODUCTION
+      - Production
+      - Production Contact
+      - Production Cordinator
+      - Creative Producer
+      - Film Producer
       - PC
     # Identified by the PRODUCTION | FARAGO PROJECTS section heading, which is more
     # reliable than the title: 'Producer' also appears under CLIENT.
@@ -538,6 +545,30 @@ roles:
       - Wardrobe Truck
       - Equipment
       - "Riggers:"
+      # 2022 batch 1 (jobs 243, 245, 249, 250, 251)
+      - Capenter
+      - Supervisor / Carpenter
+      - Painter
+      - AH Studio Coordinator
+      - Teleprompter Op
+      - Styling Van
+      - Photo Van
+      - Client Van
+      - Crew Minibus
+      - Truck Driver
+      - Translator
+      - Splash Bag Operator
+      - Props Handler
+      - Nurse on Set
+      - Covid Coordinator
+      - Dolly Grip
+      - Crane Grip
+      - Crane Technician
+      - Head Technician
+      - BTS Video
+      - Camera Operator B-Cam
+      - 2nd Unit DP/Camera Op
+      - Lighting Double
 
   crew_lead:
     # Heads of department and director-level technical roles. Several are directors in
@@ -627,6 +658,16 @@ roles:
       - Transportation PA
       # 2023 batch 7 (job 262)
       - Styling PA
+      # 2022 batch 1 (jobs 243, 245, 248): hidden either way, aliased to quiet the report
+      - Set PA
+      - PA/Driver
+      - PA Driver 2nd Unit
+      - PA Driver Production Van
+      - Pro PA Man & Van
+      - Aux
+      - 2nd 2C
+      - 1st AC B-Cam
+      - Focus Puller 2nd Unit
 
   other:
     # The fallback bucket: any label that matches no alias and no pattern shape.
@@ -689,7 +730,7 @@ roles:
     # Contact: 1% of talent rows carry a direct number, 44% have an agent row beneath. So
     # in practice the contact route is the agency, via the relational `agent` rule — which
     # now also means talent agents ARE kept, since their principal is kept.
-    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7, Hero Talent, Extra, Campaign Shoot Talent, Product Shoot Talent, Model 1, Model 2, Model 3, Model 4, Model 5]
+    aliases: [Talent, Model, Artist Collaborator, Cast, MW Model, WW Model, Fitting Model, Fit Models, Fit Model, Models, Model (Fitting), Talent (Fitting), Fitting Models, Adidas Runner, Talent 1, Talent 2, Talent 3, Talent 4, Talent 5, Talent 6, Talent 7, Hero Talent, Extra, Campaign Shoot Talent, Product Shoot Talent, Model 1, Model 2, Model 3, Model 4, Model 5, Extra Talent, Grace Fitting Model]
     # 2024 batch 3: men's and women's model rows, fitting model (jobs 412, 413): MW Model, WW Model, Fitting Model
     # 2024 batch 4 (job 393): Fit Models, Fit Model
     # 2024 batch 5 (job 381): Models
@@ -709,7 +750,7 @@ roles:
 # if a shape needs carve-outs, it belongs in `aliases` instead.
 # ---------------------------------------------------------------------------------
 patterns:
-  - shape: '(?i)^((senior|executive|exec|senior\s+agency|agency|lead|associate)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
+  - shape: '(?i)^((senior|executive|exec|senior\s+agency|junior\s+agency|junior|agency|lead|associate)\s+)?(producer|project\s+manager|ep)\b[^(]*\(for\s|^production\s*\(for\s'
     canonical: production_lead
     note: >
       An agency producer named against the artist they produce for: "PRODUCER (for Claire
